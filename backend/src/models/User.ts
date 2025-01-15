@@ -1,23 +1,31 @@
-import { Schema, model, Document, Model } from 'mongoose';
-
+import { Schema, model, Document, Model, CallbackError } from 'mongoose';
+import bcrypt from "bcryptjs";
 interface IUser extends Document {
-  name: string;
-  age: number;
-  email: string;
+  firstName: string;
+  lastName: string;
+  username: string;
   password: string;
 }
 
 const UserSchema = new Schema<IUser>({
-  name: { type: String, required: true },
-  age: { type: Number, required: true },
-  email: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  username: { type: String, required: true },
   password: { type: String, required: true },
 }, {
   timestamps: true,
 });
 
 UserSchema.pre<IUser>('save', async function(next){
-   
+  try{
+    const salt = 12;
+    const passwordHash = await bcrypt.hash(this.password, salt);
+    this.password = passwordHash;
+
+    next();
+  }catch(e){
+    next(e as CallbackError);
+  }
 });
 
 const UserModel: Model<IUser> = model<IUser>("User", UserSchema);

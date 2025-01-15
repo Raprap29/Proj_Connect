@@ -1,12 +1,32 @@
 // src/services/UserService.ts
 
+import { ConflictError, NotFoundError } from '@/utils/errors';
 import UserModel from '../models/User';
-
+import { decode, sign, verify } from 'hono/jwt'
+import bcrypt from "bcryptjs";
 class UserService {
-  // Create a new user
-  async createUser(name: string, email: string, age: number) {
+
+  async verifyPassword(plainPassword: string, hashedPassword: string) {
     try {
-      const user = UserModel.create({ name, email, age });
+      const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
+      return isMatch; // true if the passwords match, false otherwise
+    } catch (error) {
+      console.error('Error comparing passwords:', error);
+      throw error;
+    }
+  }
+  
+  // Create a new user
+  async createUser(firstName: string, lastName: string, username: string, password: string) {
+    try {
+
+      const isExist = await UserModel.findOne({username: username});
+
+      if(isExist){
+        throw new ConflictError("This user is already exist.");
+      }
+
+      const user = UserModel.create({ firstName, lastName, username, password });
       return user;
     } catch (error) {
       throw new Error('Error creating user: ' + error);
@@ -20,6 +40,40 @@ class UserService {
       return users;
     } catch (error) {
       throw new Error('Error fetching users: ' + error);
+    }
+  }
+
+  async Login(username: string, password: string): Promise<string>{
+    try{
+
+      const checkUser = await UserModel.findOne({username});
+
+      if(!checkUser){
+        throw new NotFoundError("* Username and password is incorrect.")
+      }
+
+      const isValid = await this.verifyPassword(password, checkUser.password);
+
+      if(!isValid){
+        throw new Error("* Username and password is incorrect.");
+      }
+
+      const payload = {
+        username: checkUser.username,
+        firstName: checkUser.firstName,
+        lastName: checkUser.lastName,
+        auth: true,
+        exp: Math.floor(Date.now() / 1000) + 60 * 5, // Token expiration in 5 minutes
+      };
+
+      const secretKey = "Iloveyou";
+
+      const token = await sign(payload, secretKey);
+
+      return token;
+      
+    }catch(error){
+      throw new Error("Error login: " + error);
     }
   }
 
