@@ -32,3 +32,16 @@ export const Login = async (c:Context) => {
 
     return c.json({data: token}, 200);
 }
+
+export const GetUser = async (c:Context) => {
+    const {id} = c.req.param();
+
+    if(!id)
+    {
+        throw new NotFoundError("Missing ID"); 
+    }
+    const userProfile = await userService.getUserById(id);
+
+    return c.json({user: userProfile}, 200);
+
+}

@@ -81,7 +81,7 @@ class UserService {
   async getUserById(userId: string) {
     try {
       const user = await UserModel.findById(userId);
-      if (!user) throw new Error('User not found');
+      if (!user) throw new NotFoundError('User not found');
       return user;
     } catch (error) {
       throw new Error('Error fetching user: ' + error);
