@@ -1,13 +1,12 @@
 // src/services/UserService.ts
 
-import {UserSchema} from '../models/userModel';
+import UserModel from '../models/User';
 
 class UserService {
   // Create a new user
   async createUser(name: string, email: string, age: number) {
     try {
-      const user = new UserSchema({ name, email, age });
-      await user.save();
+      const user = UserModel.create({ name, email, age });
       return user;
     } catch (error) {
       throw new Error('Error creating user: ' + error);
@@ -17,7 +16,7 @@ class UserService {
   // Get all users
   async getAllUsers() {
     try {
-      const users = await UserSchema.find();
+      const users = await UserModel.find();
       return users;
     } catch (error) {
       throw new Error('Error fetching users: ' + error);
@@ -27,7 +26,7 @@ class UserService {
   // Get user by ID
   async getUserById(userId: string) {
     try {
-      const user = await User.findById(userId);
+      const user = await UserModel.findById(userId);
       if (!user) throw new Error('User not found');
       return user;
     } catch (error) {
@@ -38,7 +37,7 @@ class UserService {
   // Update user by ID
   async updateUser(userId: string, name: string, email: string, age: number) {
     try {
-      const user = await User.findByIdAndUpdate(
+      const user = await UserModel.findByIdAndUpdate(
         userId,
         { name, email, age },
         { new: true } // Return the updated user
@@ -53,7 +52,7 @@ class UserService {
   // Delete user by ID
   async deleteUser(userId: string) {
     try {
-      const user = await User.findByIdAndDelete(userId);
+      const user = await UserModel.findByIdAndDelete(userId);
       if (!user) throw new Error('User not found');
       return user;
     } catch (error) {
