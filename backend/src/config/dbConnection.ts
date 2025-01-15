@@ -23,6 +23,3 @@ const connectToDatabase = async (): Promise<void> => {
 };
 
 export default connectToDatabase;
-
-// Invoke the connection function
-connectToDatabase();
