@@ -1,0 +1,30 @@
+{
+  "name": "backendr",
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development watch src/index.ts",
+    "migrate:prod": "cross-env NODE_ENV=production tsx src/scripts/migrations.ts",
+    "migrate:dev": "cross-env NODE_ENV=development tsx src/scripts/migrations.ts",
+    "make:model": "cross-env NODE_ENV=production tsx src/scripts/generateModel.ts",
+    "migrate": "cross-env NODE_ENV=production tsx src/scripts/migrateRun.ts",
+    "migrate:drop": "cross-env NODE_ENV=production tsx src/scripts/dropAllCollections.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "child_process": "^1.0.2",
+    "dotenv": "^16.4.7",
+    "hono": "^4.6.16",
+    "http-status-codes": "^2.3.0",
+    "mongoose": "^8.9.5"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^20.11.17",
+    "cross-env": "^7.0.3",
+    "prettier": "3.4.2",
+    "tsx": "^4.7.1"
+  }
+}

@@ -1,0 +1,11 @@
+POST http://localhost:5000/users
+Content-Type: application/json
+Authorization: Bearer 12345
+
+{
+    "name": "tesetfrr"
+}
+
+###
+
+GET http://localhost:5000/test/2
