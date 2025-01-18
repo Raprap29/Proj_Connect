@@ -1,6 +1,6 @@
 GET http://localhost:5000/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMTIzIiwiZmlyc3ROYW1lIjoiYWRtaW4iLCJsYXN0TmFtZSI6ImFkbWluIiwiYXV0aCI6dHJ1ZSwiZXhwIjoxNzM2OTcxNDg1fQ.ttHwHQBptE4Rlgw0MRTwPnAQ0pfc9nwxFMydbL3Bb-s
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMTIzIiwiZmlyc3ROYW1lIjoiYWRtaW4iLCJsYXN0TmFtZSI6ImFkbWluIiwiYXV0aCI6dHJ1ZSwiZXhwIjoxNzM3ODMxNTMzfQ.hnESWoafsFOp13iN4vl5S6CHnYk4KREr8uZChRRugcA
 
 ###
 
@@ -27,3 +27,34 @@ Content-Type: application/json
 ###
 
 GET http://localhost:5000/user/67880c26c08ce74707d34de4
+
+###
+
+GET http://localhost:5000/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMTIzIiwiZmlyc3ROYW1lIjoiYWRtaW4iLCJsYXN0TmFtZSI6ImFkbWluIiwiYXV0aCI6dHJ1ZSwiZXhwIjoxNzM3ODMxNTMzfQ.hnESWoafsFOp13iN4vl5S6CHnYk4KREr8uZChRRugcA
+
+### 
+
+PUT http://localhost:5000/user/update/67880c26c08ce74707d34de4
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMTIzIiwiZmlyc3ROYW1lIjoiYWRtaW4iLCJsYXN0TmFtZSI6ImFkbWluIiwiYXV0aCI6dHJ1ZSwiZXhwIjoxNzM3ODMxNTMzfQ.hnESWoafsFOp13iN4vl5S6CHnYk4KREr8uZChRRugcA
+
+{
+    "username": "admin1235",
+    "password": "admin1235",
+    "firstName": "admin",
+    "lastName": "admin"
+}
+
+###
+
+POST http://localhost:5000/register
+Content-Type: application/json
+
+{
+    "username": "admin123",
+    "password": "admin123",
+    "firstName": "admin5",
+    "lastName": "admin5"
+}
