@@ -2,14 +2,14 @@ import { Schema, model, Document, Model, CallbackError } from 'mongoose';
 import bcrypt from "bcryptjs";
 interface IEmployee extends Document {
   firstName: string;
-  lastName: number;
+  lastName: string;
   username: string;
   password: string;
 }
 
 const EmployeeSchema = new Schema<IEmployee>({
   firstName: { type: String, required: true },
-  lastName: { type: Number, required: true },
+  lastName: { type: String, required: true },
   username: { type: String, required: true },
   password: { type: String, required: true },
 }, {

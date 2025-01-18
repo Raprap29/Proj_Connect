@@ -40,7 +40,7 @@ npm run make:model (nameModel) (e.g. name:string, age: number, status: boolean)
 3. Run All Migrations
 Apply all pending migrations from the migration folder. This will execute every migration and apply any updates to the database schema.
 
-npm run migrate
+npm run migrate (up or down)
 
 4. Drop All Tables in the Database
 Use this command to drop all tables (or documents) in your database. This will completely clear the database, so be cautious when running it in production.

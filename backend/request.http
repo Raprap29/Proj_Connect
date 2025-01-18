@@ -32,7 +32,7 @@ GET http://localhost:5000/user/67880c26c08ce74707d34de4
 
 GET http://localhost:5000/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMTIzIiwiZmlyc3ROYW1lIjoiYWRtaW4iLCJsYXN0TmFtZSI6ImFkbWluIiwiYXV0aCI6dHJ1ZSwiZXhwIjoxNzM3ODMxNTMzfQ.hnESWoafsFOp13iN4vl5S6CHnYk4KREr8uZChRRugcA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMTIzIiwiZmlyc3ROYW1lIjoiYWRtaW41IiwibGFzdE5hbWUiOiJhZG1pbjUiLCJhdXRoIjp0cnVlLCJleHAiOjE3Mzc4MzMzMjV9.AEXbmipxje2mINRq9sdfrDAofyo2rfvvYVGV8UX-vKg
 
 ### 
 
@@ -58,3 +58,6 @@ Content-Type: application/json
     "firstName": "admin5",
     "lastName": "admin5"
 }
+
+
+###

@@ -1,0 +1,143 @@
+// src/services/UserService.ts
+
+import { ConflictError, NotFoundError, RequiredError } from '@/utils/errors';
+import EmployeeModel from '../models/Employee';
+import { decode, sign } from 'hono/jwt'
+import bcrypt from "bcryptjs";
+class EmployeeService {
+
+  async verifyPassword(plainPassword: string, hashedPassword: string) {
+    try {
+      const isMatch = await bcrypt.compare(plainPassword, hashedPassword);
+      return isMatch; // true if the passwords match, false otherwise
+    } catch (error) {
+      console.error('Error comparing passwords:', error);
+      throw error;
+    }
+  }
+  
+  // Create a new user
+  async createUser(firstName: string, lastName: string, username: string, password: string) {
+    try {
+
+      const isExist = await EmployeeModel.findOne({username: username});
+
+      if(isExist){
+        throw new ConflictError("This user is already exist.");
+      }
+
+      const user = EmployeeModel.create({ firstName, lastName, username, password });
+      return user;
+    } catch (error) {
+      throw new Error('Error creating user: ' + error);
+    }
+  }
+
+  // Get all users
+  async getAllUsers() {
+    try {
+      const users = await EmployeeModel.find();
+      return users;
+    } catch (error) {
+      throw new Error('Error fetching users: ' + error);
+    }
+  }
+
+  async Login(username: string, password: string): Promise<string>{
+    try{
+
+      const checkUser = await EmployeeModel.findOne({username});
+
+      if(!checkUser){
+        throw new NotFoundError("* Username and password is incorrect.")
+      }
+
+      const isValid = await this.verifyPassword(password, checkUser.password);
+
+      if(!isValid){
+        throw new Error("* Username and password is incorrect.");
+      }
+
+      const payload = {
+        username: checkUser.username,
+        firstName: checkUser.firstName,
+        lastName: checkUser.lastName,
+        auth: true,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7, // Token expiration in 5 minutes
+      };
+
+      const secretKey = "Iloveyou";
+
+      const token = await sign(payload, secretKey);
+
+      return token;
+      
+    }catch(error){
+      throw new Error("Error login: " + error);
+    }
+  }
+
+  // Get user by ID
+  async getUserById(userId: string) {
+    try {
+      const user = await EmployeeModel.findById(userId);
+      if (!user) throw new NotFoundError('User not found');
+      return user;
+    } catch (error) {
+      throw new Error('Error fetching user: ' + error);
+    }
+  }
+
+  // Update user by ID
+  async updateUser(userId: string, firstName: string, lastName: string, username: string, password: string) {
+    try {
+
+      const updateData: any = {
+        firstName,
+        lastName,
+        username,
+      };
+
+      if(!updateData.firstName ||
+        !updateData.lastName ||
+        !updateData.username
+      ){
+        throw new RequiredError("* Required all fields");
+      }
+
+      if(password){
+        updateData.password = password;
+      }
+
+      const existingUser = await EmployeeModel.findOne({username: username, _id: {$ne: userId}});
+
+      if (existingUser) {
+        throw new ConflictError('Username is already taken');
+      }
+
+      const user = await EmployeeModel.findByIdAndUpdate(
+        userId,
+        updateData,
+        { new: true } // Return the updated user
+      ); 
+
+      if (!user) throw new Error('User not found');
+      return user;
+    } catch (error) {
+      throw new Error('Error updating user: ' + error);
+    }
+  }
+
+  // Delete user by ID
+  async deleteUser(userId: string) {
+    try {
+      const user = await EmployeeModel.findByIdAndDelete(userId);
+      if (!user) throw new Error('User not found');
+      return user;
+    } catch (error) {
+      throw new Error('Error deleting user: ' + error);
+    }
+  }
+}
+
+export default new EmployeeService();
