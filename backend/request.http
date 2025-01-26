@@ -61,3 +61,10 @@ Content-Type: application/json
 
 
 ###
+
+POST http://localhost:5000/ai/message
+Content-Type: application/json
+
+{
+    "message": "do you know code?"
+}

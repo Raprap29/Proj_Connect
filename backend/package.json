@@ -10,14 +10,18 @@
     "migrate-drop": "cross-env NODE_ENV=production tsx src/scripts/dropAllCollections.ts"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@hono/node-server": "^1.13.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "child_process": "^1.0.2",
     "dotenv": "^16.4.7",
+    "hi-base32": "^0.5.1",
     "hono": "^4.6.16",
+    "http": "^0.0.1-security",
     "http-status-codes": "^2.3.0",
-    "mongoose": "^8.9.5"
+    "mongoose": "^8.9.5",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
