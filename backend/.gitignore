@@ -7,6 +7,7 @@
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/shelf
+public/uploads/
 
 # deps
 node_modules/
