@@ -29,9 +29,6 @@ export const MessageAiImageController = async (c: Context) => {
       return c.json({ message: 'No file uploaded. Please include an image.' }, 400);
     }
 
-    if (!(uploadedFile instanceof File)) {
-      return c.json({ message: 'Invalid file format.' }, 400);
-    }
 
     const response = await aiServices.ImageChat('test', 'gemini-pro', uploadedFile);
 

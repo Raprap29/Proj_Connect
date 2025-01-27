@@ -17,7 +17,7 @@
     "child_process": "^1.0.2",
     "dotenv": "^16.4.7",
     "hi-base32": "^0.5.1",
-    "hono": "^4.6.16",
+    "hono": "^4.6.19",
     "http": "^0.0.1-security",
     "http-status-codes": "^2.3.0",
     "mongoose": "^8.9.5",

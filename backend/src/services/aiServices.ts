@@ -34,7 +34,7 @@ class AiServices {
         const mimeType = uploadedFile.type || "image/png";
         const arrayBuffer = await uploadedFile.arrayBuffer();
         const fileExtension = mimeType.split('/')[1];
-        fs.writeFileSync(`public/uploads/${v4()}.${fileExtension}`, Buffer.from(arrayBuffer));
+        fs.writeFileSync(`static/uploads/${v4()}.${fileExtension}`, Buffer.from(arrayBuffer));
         return true;
 
         // const base64Image = Buffer.from(arrayBuffer).toString('base64');
