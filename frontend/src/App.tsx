@@ -23,7 +23,7 @@ function App() {
 
     const formData = new FormData();
     formData.append('image', selectedFile);
-    formData.append('message', 'This is a test message');
+    formData.append('message', 'What is this?');
     try{
       const {data} = await axios.post('/api/ai/image', formData, {
         headers: {

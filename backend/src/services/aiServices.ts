@@ -34,15 +34,12 @@ class AiServices {
         const mimeType = uploadedFile.type || "image/png";
         const arrayBuffer = await uploadedFile.arrayBuffer();
         const fileExtension = mimeType.split('/')[1];
-        fs.writeFileSync(`static/uploads/${v4()}.${fileExtension}`, Buffer.from(arrayBuffer));
-        return true;
+        const fileName = v4();
+        fs.writeFileSync(`static/uploads/${fileName}.${fileExtension}`, Buffer.from(arrayBuffer));
 
-        // const base64Image = Buffer.from(arrayBuffer).toString('base64');
-        // const base32Encoded = `data:${mimeType};base64,${base64Image}`;
+        const result = await model.generateContent([message, `http://localhost:5000/static/uploads/${fileName}.${fileExtension}`]);
 
-        // const result = await model.generateContent([message, base32Encoded]);
-
-        // return result.response;
+        return result.response;
 
     }catch(e)
     {
