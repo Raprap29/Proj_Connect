@@ -1,17 +1,45 @@
 import { useDispatch } from "react-redux";
 import { logout } from "../../slice/authSlice";
 import { useNavigate } from "react-router-dom";
-export default function Navbar() {
+import { getAuthToken } from "../authToken/helperAuth";
+import { jwtDecode } from "jwt-decode";
+import {io} from "socket.io-client";
+
+const URL = 'ws://localhost:5000';
+
+const socket = io(URL, {
+    reconnection: true,
+    transports: ['websocket', 'polling'],
+    reconnectionAttempts: 5,
+});
+
+interface UserProps {
+    username: string;
+    firstName: string;
+    lastName: string;
+    auth: boolean;
+    exp: number; // Expiration time as a Unix timestamp (seconds)
+}
+
+const Navbar = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const handleLogout = async () => {
+        const token = getAuthToken();
+       
         try{
-            const response = dispatch(logout());
-
-            if(response){
-                navigate('/');
-            }
+           if(token){
+                const res: UserProps = jwtDecode(token); 
+                const response = dispatch(logout());
+                await socket.emit('logout', {
+                    username: res.username,
+                });
+                
+                if(response){
+                    navigate('/');
+                }
+           }
         }catch(e){
             return console.error(e);
         }
@@ -58,3 +86,6 @@ export default function Navbar() {
         </>
     )
 }
+
+
+export default Navbar;

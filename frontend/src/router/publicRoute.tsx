@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
 import { getAuthToken } from "../components/authToken/helperAuth";
 import { Navigate } from "react-router-dom";
+import { Socket } from "socket.io-client";
 interface ElementProp {
-    Element: React.ComponentType;
+    Element: React.ComponentType<{socket: Socket}>;
     title: string;
+    socket: Socket;
 }
 
-const PublicRoute: React.FC<ElementProp> = ({ Element, title }) => {
+const PublicRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
 
     const token = getAuthToken();
 
@@ -18,7 +20,7 @@ const PublicRoute: React.FC<ElementProp> = ({ Element, title }) => {
         return <Navigate to="/dashboard" />;
     }
 
-    return <Element />;
+    return <Element socket={socket} />;
 }
 
 export default PublicRoute;

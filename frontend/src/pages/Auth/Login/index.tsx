@@ -2,12 +2,19 @@ import {useState, ChangeEvent, FormEvent} from 'react'
 import { Link } from 'react-router-dom';
 import { useLoginUserMutation } from '../../../api/api';
 import { useNavigate } from 'react-router-dom';
+
+import { Socket } from "socket.io-client";
+
+interface SocketProps {
+    socket: Socket;
+}
+
 interface FormProps {
     username: string;
     password: string;
 }
 
-export default function Login() {
+const Login: React.FC<SocketProps> = ({ socket }) => {
     
     const navigate = useNavigate();
 
@@ -30,7 +37,7 @@ export default function Login() {
                 return alert("Please input all field");
             }
 
-            const response = await loginUser({
+            const { data } = await loginUser({
                 username: username,
                 password: password,
             });
@@ -38,8 +45,14 @@ export default function Login() {
                 username: '',
                 password: '',
             })
-            
-            if(response){
+
+            if(data.token){
+
+                await socket.emit('login', {
+                    username: data.username,
+                    id: data.id,
+                });
+
                 navigate('/dashboard');
             }
             
@@ -76,3 +89,5 @@ export default function Login() {
         </>
     )
 }
+
+export default Login;

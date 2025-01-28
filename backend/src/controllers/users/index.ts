@@ -26,7 +26,7 @@ export const Register = async (c:Context) => {
     const success = await userService.createUser(body.firstName, body.lastName, body.username, body.password, 0);
 
     if(success){
-        return c.json({message: "Success created users"}, 200);
+        return c.json({message: "Success created users", status: true}, 200);
     }
 }
 
@@ -35,9 +35,9 @@ export const Login = async (c:Context) => {
 
     if(!body.username || !body.password) throw new RequiredError("* Required username and password");
 
-    const token = await userService.Login(body.username, body.password);
+    const response = await userService.Login(body.username, body.password);
 
-    return c.json({token: token}, 200);
+    return c.json({token: response.token, id: response.id, username: response.username}, 200);
 }
 
 export const GetUser = async (c:Context) => {

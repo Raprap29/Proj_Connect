@@ -1,10 +1,14 @@
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import MessageModel from '@/models/Message';
 interface User {
-    username: string;
-    id: string;
+  username: string;
+  id: string;
 }
-  
+
+interface messageProps {
+  message: string;
+}
+
 
 // Map to store registered users with their socket IDs
 const users: Map<string, User> = new Map();
@@ -17,14 +21,24 @@ export function initSocketController(io: SocketIOServer): void {
 
   io.on('connection', (socket: Socket) => {
     console.log(`Client connected: ${socket.id}`);
-    
-    socket.on('login', (username: string) => {
-        users.set(username, {username: username, id: socket.id});
 
-        console.log(`User logged in: ${username} (${socket.id})`);
-        socket.emit('loggedIn', `Welcome, ${username}! You are now online.`);
+    socket.on('login', (data: User) => {
+        console.log(`User logged in: ${data.username} (${socket.id})`);
+        users.set(data.username, {username: data.username, id: socket.id});
 
-        io.emit('onlineUsers', Array.from(users.keys()));
+        socket.emit('loggedIn', `Welcome, ${data.username}! You are now online.`);
+
+        io.emit('onlineUsers', users);
+    });
+
+    socket.on('register', (data: messageProps) => {
+      console.log(data.message);
+    });
+
+    socket.on('reconnected', (data: { username: string }) => {
+      users.set(data.username, {username: data.username, id: socket.id});
+      console.log(`User ${data.username} reconnected with new socket ID ${socket.id}`);
+      io.emit('onlineUsers', Array.from(users.values()));
     });
     
     socket.on('privateMessage', async ({ to, message, userId, status }: { to: string; message: string, userId: string, status: number }) => {
@@ -41,21 +55,33 @@ export function initSocketController(io: SocketIOServer): void {
           return;
         }
 
-        const AddMessage = await MessageModel.create({
-            userId: userId,
-            message: message,
-            status: status, 
-        });
+        // const AddMessage = await MessageModel.create({
+        //     userId: userId,
+        //     message: message,
+        //     status: status, 
+        // });
 
-        if(AddMessage){
-            socket.to(recipient.id).emit('privateMessage', {
-              from: sender,
-              message,
-            });
-            console.log(`Private message from ${sender} to ${to}: ${message}`);
-        }
+        // if(AddMessage){
+          socket.to(recipient.id).emit('receiveMessage', {
+            from: sender,
+            message,
+          });
+          console.log(`Private message from ${sender} to ${to}: ${message}`);
+        // }
 
     })
+
+    socket.on('logout', (data: User) => {
+      const username = getUsername(data.username);
+
+      if(username){
+        users.delete(username);
+        console.log(`User disconnected: ${username} (${socket.id})`);
+        
+        io.emit('onlineUsers', Array.from(users.keys()));
+      }
+
+    });
 
     socket.on('disconnect', () => {
         const username = getUsernameBySocketId(socket.id);
@@ -80,6 +106,21 @@ export function initSocketController(io: SocketIOServer): void {
 function getUsernameBySocketId(socketId: string): string | undefined {
   for (const [username, user] of users.entries()) {
     if (user.id === socketId) {
+      return username;
+    }
+  }
+  return undefined;
+}
+
+
+/**
+ * Get the username associated with a socket ID.
+ * @param username - The socket username.
+ * @returns The username or undefined if not found.
+ */
+function getUsername(usernameOnline: string): string | undefined {
+  for (const [username, user] of users.entries()) {
+    if (username === usernameOnline) {
       return username;
     }
   }

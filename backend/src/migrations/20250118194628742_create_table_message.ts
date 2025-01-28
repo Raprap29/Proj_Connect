@@ -6,6 +6,7 @@ export const up = async (): Promise<void> => {
 
    const messageSchema = new mongoose.Schema({
       userId: { type: String, require: true },
+      ticketId: { type: String, require: true },
       message: { type: String, required: true },
       status: { type: Number, required: true },
     });

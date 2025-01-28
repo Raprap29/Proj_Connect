@@ -10,7 +10,7 @@ import {io} from "socket.io-client";
 
 const URL = 'ws://localhost:5000';
 
-export const socket = io(URL, {
+const socket = io(URL, {
     reconnection: true,
     transports: ['websocket', 'polling'],
     reconnectionAttempts: 5,
@@ -22,11 +22,11 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: '/',
-                element: <PublicRoute Element={Login} title="Login | System" />
+                element: <PublicRoute Element={Login} title="Login | System" socket={socket}/>
             },
             {
                 path: "/register",
-                element: <PublicRoute Element={Register} title="Register | System" />
+                element: <PublicRoute Element={Register} title="Register | System" socket={socket}/>
             }
         ]
     }, 

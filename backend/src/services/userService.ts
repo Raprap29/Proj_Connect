@@ -45,7 +45,7 @@ class UserService {
     }
   }
 
-  async Login(username: string, password: string): Promise<string>{
+  async Login(username: string, password: string): Promise<any>{
     try{
 
       const checkUser = await UserModel.findOne({username});
@@ -72,7 +72,7 @@ class UserService {
 
       const token = await sign(payload, secretKey);
 
-      return token;
+      return {token: token, id: checkUser._id, username: checkUser.username};
       
     }catch(error){
       throw new Error("Error login: " + error);

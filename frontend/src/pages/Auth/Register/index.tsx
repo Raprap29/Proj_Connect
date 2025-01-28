@@ -2,6 +2,13 @@ import {useState, ChangeEvent, FormEvent} from 'react'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import { useRegisterUserMutation } from '../../../api/api';
+
+import { Socket } from "socket.io-client";
+
+interface SocketProps {
+    socket: Socket;
+}
+
 interface FormRegisterProps {
     username: string;
     password: string;
@@ -9,9 +16,9 @@ interface FormRegisterProps {
     lastname: string;
 }
 
-export default function Register () {
+const Register: React.FC<SocketProps> = ({ socket }) => {
     const navigate = useNavigate();
-    const [registerUser, {isLoading: RegisterLoading, error: RegisterError}] = useRegisterUserMutation();
+    const [registerUser, {isLoading: RegisterLoading}] = useRegisterUserMutation();
 
     const [form, setForm] = useState<FormRegisterProps>({
         username: '',
@@ -41,12 +48,14 @@ export default function Register () {
                 lastName: lastname
             }).unwrap();
 
-            if(response.message){
+            if(response.status){
+                await socket.emit('register', {
+                    message: response.message,
+                });
                 navigate('/');
             }
 
         }catch(e){
-            console.log(RegisterError);
             return console.error(e);
         }
     }
@@ -83,3 +92,5 @@ export default function Register () {
     </div>
     )
 }
+
+export default Register;
