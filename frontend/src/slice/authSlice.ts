@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { ApiSystem } from "../api/api";
+import { UserApi } from "../api/UserApi";
 import Cookies from 'js-cookie';
 interface AuthState {
     token: string | null;
@@ -22,7 +22,7 @@ const authSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addMatcher(ApiSystem.endpoints.loginUser.matchFulfilled, (state, action) => {
+        builder.addMatcher(UserApi.endpoints.loginUser.matchFulfilled, (state, action) => {
             if (action.payload?.token) {
                 state.token = action.payload.token;
                 Cookies.set('authToken', action.payload.token, { 
