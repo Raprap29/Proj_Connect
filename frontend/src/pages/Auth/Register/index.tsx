@@ -1,6 +1,7 @@
-import React, {useState, ChangeEvent, FormEvent} from 'react'
+import {useState, ChangeEvent, FormEvent} from 'react'
 import { Link } from 'react-router-dom'
-
+import { useNavigate } from 'react-router-dom';
+import { useRegisterUserMutation } from '../../../api/api';
 interface FormRegisterProps {
     username: string;
     password: string;
@@ -9,6 +10,8 @@ interface FormRegisterProps {
 }
 
 export default function Register () {
+    const navigate = useNavigate();
+    const [registerUser, {isLoading: RegisterLoading, error: RegisterError}] = useRegisterUserMutation();
 
     const [form, setForm] = useState<FormRegisterProps>({
         username: '',
@@ -21,10 +24,29 @@ export default function Register () {
         setForm({...form, [e.target.name]: e.target.value});
     }
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
         try{
-            e.preventDefault();
+
+            const {username, password, firstname, lastname} = form;
+        
+            if(username === "" || password === "" || firstname === "" || lastname === ""){
+                return alert("Please input all field");
+            }
+
+            const response = await registerUser({
+                username: username,
+                password: password, 
+                firstName: firstname,
+                lastName: lastname
+            }).unwrap();
+
+            if(response.message){
+                navigate('/');
+            }
+
         }catch(e){
+            console.log(RegisterError);
             return console.error(e);
         }
     }
@@ -44,15 +66,15 @@ export default function Register () {
                 </div>
             </div>
             <div className="relative z-0 w-full mb-5 group">
-                <input onChange={handleChange} type="email" name="username" id="floating_username" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                <input onChange={handleChange} type="text" name="username" id="floating_username" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                 <label htmlFor="floating_username" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
             </div>
             <div className="relative z-0 w-full mb-2 group">
-                <input onChange={handleChange} type="password" name="floating_password" id="floating_password" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                <input onChange={handleChange} type="password" name="password" id="floating_password" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                 <label htmlFor="floating_password" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
             </div>
             <div className='w-full mt-5'>
-                <button type="submit" className="text-white w-full bg-green-700 py-3 rounded-lg font-medium">Register</button>
+                <button type="submit" className={`${RegisterLoading ? 'pointer-events-none' : ''} cursor-pointer text-white w-full bg-green-700 py-3 rounded-lg font-medium`}>{RegisterLoading ? 'Loading...' : 'Register'}</button>
             </div>
             <div className='mb-4 text-sm mt-6 text-center'>
             Have an account? <Link to="/" className='text-sm text-gray-500 hover:underline hover:text-blue-600 transition duration-300 ease-in-out'>Login</Link>

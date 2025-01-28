@@ -3,7 +3,7 @@ export const setAuthToken = (token: string) => {
     // Set a secure, HttpOnly cookie for the JWT token
     Cookies.set('authToken', token, { 
       expires: 7,
-      // secure: true, 
+      secure: true, 
       sameSite: 'Strict',
     });
   };

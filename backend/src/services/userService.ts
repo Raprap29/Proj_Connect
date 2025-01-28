@@ -17,7 +17,7 @@ class UserService {
   }
   
   // Create a new user
-  async createUser(firstName: string, lastName: string, username: string, password: string) {
+  async createUser(firstName: string, lastName: string, username: string, password: string, role: number) {
     try {
 
       const isExist = await UserModel.findOne({username: username});
@@ -26,7 +26,7 @@ class UserService {
         throw new ConflictError("This user is already exist.");
       }
 
-      const user = UserModel.create({ firstName, lastName, username, password });
+      const user = UserModel.create({ firstName, lastName, username, password, role });
       return user;
     } catch (error) {
       throw new Error('Error creating user: ' + error);
@@ -34,9 +34,11 @@ class UserService {
   }
 
   // Get all users
-  async getAllUsers() {
+  async getAllUsers(page: number) {
     try {
-      const users = await UserModel.find();
+      const limit = 10;
+      const skip = (page - 1) * limit;
+      const users = await UserModel.find().limit(limit).skip(skip);
       return users;
     } catch (error) {
       throw new Error('Error fetching users: ' + error);

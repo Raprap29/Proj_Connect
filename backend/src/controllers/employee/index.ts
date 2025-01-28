@@ -16,7 +16,7 @@ export const Register = async (c:Context) => {
         throw new RequiredError("* Please fill all the field.")
     }
 
-    const success = await employeeService.createUser(body.firstName, body.lastName, body.username, body.password);
+    const success = await employeeService.createUser(body.firstName, body.lastName, body.username, body.password, 1);
 
     if(success){
         return c.json({message: success}, 200);

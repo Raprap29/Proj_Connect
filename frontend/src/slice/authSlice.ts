@@ -1,12 +1,13 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
+import { createSlice } from "@reduxjs/toolkit";
+import { ApiSystem } from "../api/api";
+import Cookies from 'js-cookie';
 interface AuthState {
-    token: string;
+    token: string | null;
     status: number;
 }
 
 const initialState: AuthState = {
-    token: '',
+    token: Cookies.get('authToken') || null,
     status: 0,
 }
 
@@ -14,18 +15,31 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        setToken: (state, action: PayloadAction<string>) => {
-            state.token = action.payload;
-            state.status = 1;
-        },
-        removeToken: (state) => {
+        logout: (state) => {
             state.token = "";
+            Cookies.remove("authToken");
             state.status = 0;
         }
+    },
+    extraReducers: (builder) => {
+        builder.addMatcher(ApiSystem.endpoints.loginUser.matchFulfilled, (state, action) => {
+            if (action.payload?.token) {
+                state.token = action.payload.token;
+                Cookies.set('authToken', action.payload.token, { 
+                    expires: 7,
+                    secure: true, 
+                    sameSite: 'Strict',
+                });
+                state.status = 1;
+            } else {
+                // Handle the case where the token is invalid or missing
+                state.status = 0;
+            }
+        });
     }
 });
 
 
-export const { setToken, removeToken } = authSlice.actions;
+export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

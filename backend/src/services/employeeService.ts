@@ -17,7 +17,7 @@ class EmployeeService {
   }
   
   // Create a new user
-  async createUser(firstName: string, lastName: string, username: string, password: string) {
+  async createUser(firstName: string, lastName: string, username: string, password: string, role: number) {
     try {
 
       const isExist = await EmployeeModel.findOne({username: username});
@@ -26,7 +26,7 @@ class EmployeeService {
         throw new ConflictError("This user is already exist.");
       }
 
-      const user = EmployeeModel.create({ firstName, lastName, username, password });
+      const user = EmployeeModel.create({ firstName, lastName, username, password, role });
       return user;
     } catch (error) {
       throw new Error('Error creating user: ' + error);

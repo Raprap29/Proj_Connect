@@ -1,6 +1,6 @@
-GET http://localhost:5000/users
+GET http://localhost:5000/users/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMTIzIiwiZmlyc3ROYW1lIjoiYWRtaW4iLCJsYXN0TmFtZSI6ImFkbWluIiwiYXV0aCI6dHJ1ZSwiZXhwIjoxNzM3ODMxNTMzfQ.hnESWoafsFOp13iN4vl5S6CHnYk4KREr8uZChRRugcA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJmaXJzdE5hbWUiOiJSYWxwaCIsImxhc3ROYW1lIjoiTWFnbGF5YSIsImF1dGgiOnRydWUsImV4cCI6MTczODY1MDUxMn0.TUmEDolZoHm8xug6CIeOR35hzhEKC7zDtTDoG4tsjXk
 
 ###
 
@@ -20,8 +20,8 @@ POST http://localhost:5000/login
 Content-Type: application/json
 
 {
-    "username": "admin123",
-    "password": "admin123"
+    "username": "test",
+    "password": "test12345"
 }
 
 ###
