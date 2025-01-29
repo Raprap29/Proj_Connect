@@ -36,7 +36,7 @@ class UserService {
   // Get all users
   async getAllUsers(page: number, searchQuery: string = "") {
     try {
-      const limit = 2;
+      const limit = 10;
       const skip = (page - 1) * limit;
 
       const searchCondition = {

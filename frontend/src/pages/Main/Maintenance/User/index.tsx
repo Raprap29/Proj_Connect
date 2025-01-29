@@ -1,12 +1,19 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { useGetUserQuery } from '../../../../api/UserApi';
 import TableData from '../../../../components/table/TableData';
-
+import { ContextData } from '../../../../context/AppContext';
 const UserMaintenance = () => {
   
+  const context = useContext(ContextData);
+
+  if(!context){
+    throw new Error("PageComponent must be used within an AppContext provider");
+  }
+
+  const {page, setPages} = context;
+
   const tableHeader: string[] = ['Full Name', 'Username', 'Actions'];
 
-  const [page, setPages] = useState(1);
   const [search, setSearch] = useState("");
   const {data, isLoading: loadingUser} = useGetUserQuery({page, search});
   
