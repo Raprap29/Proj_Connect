@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
+import { faker } from '@faker-js/faker';
+import bcrypt from "bcryptjs";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
@@ -23,19 +25,24 @@ mongoose.connect(MIGRATE_MONGO_URI)
 .catch(err => console.error('Error connecting to MongoDB:', err));
 
 const seederEmployee = async () => {
-    
-    const Employee = [
-        { firstName: "test", lastName: "test", username: "test", role: "test", password: "test" }
-    ]
+  const Employee: any = [];
+  const salt = 12;
+  const passwordHash = await bcrypt.hash(faker.internet.password(), salt);
+  Array.from({ length: 10 }, () => {
+    Employee.push({ firstName: faker.internet.username(), lastName: faker.internet.username(), username: faker.internet.username(), role: 1, password: passwordHash })
+  })
 
-    try{
-        const createdData =  await EmployeeModel.insertMany(Employee);
-        console.log("Success seeder");
-    }catch(e){
-        return console.error(e);
-    } finally {
-        process.exit(); 
+  try{
+    await EmployeeModel.deleteMany({});
+    const createdData =  await EmployeeModel.insertMany(Employee);
+    if(createdData){
+      console.log("Success seeder");
     }
+  }catch(e){
+    return console.error(e);
+  } finally {
+    process.exit(); 
+  }
 }
 
 seederEmployee();

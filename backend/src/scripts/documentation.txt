@@ -1,0 +1,14 @@
+npm install hono bun @faker-js/faker mongoose dotenv child_process fs path
+
+
+Seeder
+npm run migrate-seeder Employee Employee firstName,lastName,username,role,password 10
+npm run migrating-seeder
+
+
+npm run migrate (up or down)
+npm run create-model modelName (name:string,age:number)
+
+
+npm run create-migrate create_table_name
+npm run migrate-drop

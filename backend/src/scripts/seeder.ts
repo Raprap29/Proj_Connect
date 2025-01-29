@@ -24,9 +24,12 @@ const args = process.argv.slice(2);
 const seederName = args[0];
 const modelName = args[1]; // Model name (e.g., "userName")
 const fieldsString = args[2]; // Fields string (e.g., "name:string,age:number")
+const limitArg = args[3];
+
+const limit = limitArg as number | undefined;
 
 // Ensure modelName is a valid string
-if (!modelName || !fieldsString || !seederName) {
+if (!modelName || !fieldsString || !seederName || !limit) {
   throw new Error('Model name is required and Field is required.');
 }
 
@@ -45,14 +48,14 @@ if(!fields){
 
 
 // Function to generate a model file
-const generateSeeder = (seederName: string, modelName: string, fields: { fieldName: string | undefined }[]) => {
+const generateSeeder = (seederName: string, modelName: string, fields: { fieldName: string | undefined }[], limit: number) => {
 
     const modelFileName = `${seederName.charAt(0).toUpperCase() + seederName.slice(1)}.ts`; // Capitalize model name
     const modelFilePath = path.join(SEED_DIR, modelFileName);
 
     // Generate schema fields
     const schemaFields = Array.from({ length: 1 }, () => {
-        return `{ ${fields.map(({ fieldName }) => `${fieldName}: "test"`).join(', ')} }`;
+      return `{ ${fields.map(({ fieldName }) => `${fieldName}: "test"`).join(', ')} }`;
     }).join(',\n  ');
 
     // Template for model file
@@ -61,6 +64,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
+import { faker } from '@faker-js/faker';
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
@@ -81,18 +85,23 @@ mongoose.connect(MIGRATE_MONGO_URI)
 .catch(err => console.error('Error connecting to MongoDB:', err));
 
 const seeder${seederName} = async () => {
-    const ${modelName} = [
-        ${schemaFields}
-    ]
+  const ${modelName}: any = [];
 
-    try{
-        const createdData =  await ${modelName}Model.insertMany(${modelName});
-        console.log("Success seeder");
-    }catch(e){
-        return console.error(e);
-    } finally {
-        process.exit(); 
+  Array.from({ length: ${limit} }, () => {
+    Employee.push(${schemaFields})
+  })
+
+  try{
+    await ${modelName}Model.deleteMany({});
+    const createdData =  await ${modelName}Model.insertMany(${modelName});
+    if(createdData){
+      console.log("Success seeder");
     }
+  }catch(e){
+    return console.error(e);
+  } finally {
+    process.exit(); 
+  }
 }
 
 seeder${seederName}();
@@ -104,4 +113,4 @@ seeder${seederName}();
   console.log(`Seeder file created: ${seederName}`);
 };
 
-generateSeeder(seederName, modelName, fields);
+generateSeeder(seederName, modelName, fields, limit);
