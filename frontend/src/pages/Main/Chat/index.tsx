@@ -50,7 +50,7 @@ const Message: React.FC<SocketProps> = ({socket}) => {
             socket.off('onlineUsers');
         }
         
-    }, [])
+    }, [socket])
 
     return (
         <React.Fragment>

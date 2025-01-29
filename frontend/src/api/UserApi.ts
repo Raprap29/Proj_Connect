@@ -31,8 +31,20 @@ export const UserApi = createApi({
         body: credentials,
       }),
     }),
+
+    getUser: builder.query({
+      query: (page) => ({
+        url: `/users/${page}`,  
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
 // Export hooks for use in components
-export const { useRegisterUserMutation, useLoginUserMutation } = UserApi;
+export const { 
+  useRegisterUserMutation, 
+  useLoginUserMutation,
+
+  useGetUserQuery
+} = UserApi;

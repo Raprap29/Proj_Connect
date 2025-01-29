@@ -65,6 +65,7 @@ class UserService {
         firstName: checkUser.firstName,
         lastName: checkUser.lastName,
         auth: true,
+        role: checkUser.role,
         exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7, // Token expiration in 5 minutes
       };
 

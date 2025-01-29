@@ -14,14 +14,9 @@ export const EmployeeApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getUser: builder.query({
-      query: (credentials) => ({
-        url: `/users/${credentials.number}`,  
-        method: 'GET',
-      }),
-    }),
+    
   }),
 });
 
 // Export hooks for use in components
-export const { useGetUserQuery } = EmployeeApi;
+export const { } = EmployeeApi;

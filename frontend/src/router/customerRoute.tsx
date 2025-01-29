@@ -20,7 +20,7 @@ interface UserProps {
   exp: number; // Expiration time as a Unix timestamp (seconds)
 }
 
-const PrivateRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
+const CustomerRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
   const token = getAuthToken();
 
   useEffect(() => {
@@ -28,15 +28,12 @@ const PrivateRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
       const decoded: UserProps = jwtDecode(token); // Decode token to get user info
       document.title = title;
 
-      // Emit socket event
       socket.emit("reconnected", { username: decoded.username });
 
       return () => {
-        // Clean up the specific event listener
         socket.off("reconnected");
       };
     } else {
-      // If token is invalid, remove it
       Cookies.remove("authToken");
     }
   }, [title, socket, token]);
@@ -49,12 +46,12 @@ const PrivateRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
 
   // Decode token and check role
   const decoded: UserProps = jwtDecode(token);
-  if (decoded.role !== 1) {
-    return <Navigate to="/message/customer" replace />;
+  if (decoded.role !== 0) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   // Render the protected element
   return <Element socket={socket} />;
 };
 
-export default PrivateRoute;
+export default CustomerRoute;

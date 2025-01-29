@@ -7,7 +7,8 @@
     "create-migrate:dev": "cross-env NODE_ENV=development tsx src/scripts/migrations.ts",
     "create-model": "cross-env NODE_ENV=production tsx src/scripts/generateModel.ts",
     "migrate": "cross-env NODE_ENV=production tsx src/scripts/migrateRun.ts",
-    "migrate-drop": "cross-env NODE_ENV=production tsx src/scripts/dropAllCollections.ts"
+    "migrate-drop": "cross-env NODE_ENV=production tsx src/scripts/dropAllCollections.ts",
+    "migrate-seeder": "cross-env NODE_ENV=production tsx src/scripts/seeder.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

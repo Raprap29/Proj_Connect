@@ -19,3 +19,11 @@ export const LayoutPrivate = () => {
         </div>
     )
 }
+
+export const LayoutCustomer = () => {
+    return(
+        <>
+            <Outlet />
+        </>
+    )
+}
