@@ -46,6 +46,13 @@ export const UserApi = createApi({
         method: 'GET',
       }),
     }),
+
+    userInfo: builder.query<{user: User;}, {_id: string}>({
+      query: ({_id}) => ({
+        url: `/user/${_id}`,
+        method: 'GET',
+      })
+    }),
   }),
 });
 
@@ -54,5 +61,6 @@ export const {
   useRegisterUserMutation, 
   useLoginUserMutation,
 
-  useGetUserQuery
+  useGetUserQuery,
+  useUserInfoQuery
 } = UserApi;

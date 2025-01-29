@@ -10,7 +10,7 @@ const UserMaintenance = () => {
     throw new Error("PageComponent must be used within an AppContext provider");
   }
 
-  const {page, setPages} = context;
+  const {page, setPages } = context;
 
   const tableHeader: string[] = ['Full Name', 'Username', 'Actions'];
 

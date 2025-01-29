@@ -1,14 +1,17 @@
-import React from "react";
+import React, {ChangeEvent, useContext, useEffect, useState} from "react";
 import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
 import Search from "../search";
+import UpdateModal from "../modal/updateModal";
+import { useUserInfoQuery } from "../../api/UserApi";
+import { ContextData } from "../../context/AppContext";
 
 
 interface UserProps {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    role: number;
-    username: string;
+    _id: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    role: number | undefined;
+    username: string | undefined;
 }
 
 interface PropsTable {
@@ -38,8 +41,84 @@ const TableData: React.FC<PropsTable> = ({
 
 }) => {
 
+    const context = useContext(ContextData);
+    const [id, setId] = useState("");
+
+    const { data } = useUserInfoQuery({ _id: id });
+
+    const [user, setUser] = useState<UserProps>({
+        _id: '',
+        firstName: '',
+        lastName: '',
+        role: 0,
+        username: '',
+    })
+
+    const handleChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
+        setUser({...user, [e.target.name]: e.target.value});
+    }
+
+    if(!context){
+        throw new Error("No running context");
+    }
+
+    const {setUpdateModal} = context;
+
+    const handleOpen = (_id: string) => {
+        setUpdateModal(true);
+        setId(_id);
+    }
+
+    useEffect(() => {
+        if(data?.user){
+            setUser(data.user);
+        }
+    }, [data]);
+
     return(
         <div className="w-full px-5 mt-5">
+            <UpdateModal color="blue" text="UPDATE USER">
+                <form className="w-full max-w-lg mt-5">
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                                First Name
+                            </label>
+                            <input onChange={handleChangeForm} value={user.firstName} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Jane" />
+                            <p className="text-red-500 text-xs italic">Please fill out this field.</p>
+                        </div>
+                        <div className="w-full md:w-1/2 px-3">
+                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
+                                Last Name
+                            </label>
+                            <input onChange={handleChangeForm} value={user.lastName}  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="lastName" name="lastName" type="text" placeholder="Doe" />
+                        </div>
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                        <div className="w-full px-3">
+                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="username">
+                                Username
+                            </label>
+                            <input onChange={handleChangeForm} value={user.username} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="username" type="text" name="username" placeholder="Enter username" />
+                        </div>
+                    </div>
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                        <div className="w-full px-3">
+                            <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="new-password">
+                               New Password
+                            </label>
+                            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="new-password" name="new-password" type="password" placeholder="******************" />
+                            <p className="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
+                        </div>
+                    </div>
+                    <hr className='text-gray-500' />
+                    <div className="md:flex md:items-center w-full mt-4 mb-4">
+                        <button type="submit" className="transition duration-300 ease-in-out shadow bg-purple-500 w-full hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-3 cursor-pointer px-4 rounded">
+                            Update User
+                        </button>
+                    </div>
+                </form>
+            </UpdateModal>
             <Search setSearch={setSearch} />
             <table className="min-w-full border-2 border-gray-200 rounded-[5px] divide-y divide-gray-200 overflow-x-auto">
                 <thead className="bg-gray-50">
@@ -73,7 +152,7 @@ const TableData: React.FC<PropsTable> = ({
                                         {item.username}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap  text-sm font-medium">
-                                        <button type="button" className="cursor-pointer text-indigo-600 hover:text-indigo-900">Update</button>
+                                        <button type="button" onClick={() => handleOpen(item._id || "")} className="cursor-pointer text-indigo-600 hover:text-indigo-900">Update</button>
                                         <button type="button" className="cursor-pointer ml-4 text-red-600 hover:text-red-900">Delete</button>
                                     </td>
                                 </tr>
