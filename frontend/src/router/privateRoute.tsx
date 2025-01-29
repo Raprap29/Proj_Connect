@@ -29,7 +29,7 @@ const PrivateRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
       document.title = title;
 
       // Emit socket event
-      socket.emit("reconnected", { username: decoded.username });
+      socket.emit("reconnected", { username: decoded.username, role: decoded.role });
 
       return () => {
         // Clean up the specific event listener

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Socket } from "socket.io-client";
 import { getAuthToken } from '../../../components/authToken/helperAuth';
-import { jwtDecode } from 'jwt-decode';
+
 interface SocketProps {
     socket: Socket;
 }
@@ -9,14 +9,7 @@ interface SocketProps {
 interface OnlineProps {
     id: string;
     username: string;
-}
-
-interface UserProps {
-    username: string;
-    firstName: string;
-    lastName: string;
-    auth: boolean;
-    exp: number; // Expiration time as a Unix timestamp (seconds)
+    role: number;
 }
 
 
@@ -25,14 +18,13 @@ const Message: React.FC<SocketProps> = ({socket}) => {
     const [onlineUsers, setOnlineUsers] = useState<OnlineProps[]>([{
         id: '',
         username: '',
+        role: 0,
     }]);
     
     useEffect(() => {
 
         const token = getAuthToken();
         if (!token) return; // If no token is present, exit early
-    
-        const decoded: UserProps = jwtDecode(token);
 
         socket.on('receiveMessage', (data) => {
             console.log(data);
@@ -40,7 +32,7 @@ const Message: React.FC<SocketProps> = ({socket}) => {
 
         socket.on('onlineUsers', (data) => {
             if (Array.isArray(data)) {
-                const filterUsers = data.filter((item: OnlineProps) => item.username !== decoded.username);
+                const filterUsers = data.filter((item: OnlineProps) => item.role === 0);
                 setOnlineUsers(filterUsers);
             }
         });

@@ -51,6 +51,7 @@ const Login: React.FC<SocketProps> = ({ socket }) => {
                 await socket.emit('login', {
                     username: data.username,
                     id: data.id,
+                    role: 1,
                 });
 
                 navigate('/dashboard');

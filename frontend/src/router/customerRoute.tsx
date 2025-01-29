@@ -28,7 +28,7 @@ const CustomerRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
       const decoded: UserProps = jwtDecode(token); // Decode token to get user info
       document.title = title;
 
-      socket.emit("reconnected", { username: decoded.username });
+      socket.emit("reconnected", { username: decoded.username, role: decoded.role });
 
       return () => {
         socket.off("reconnected");

@@ -3,6 +3,7 @@ import MessageModel from '@/models/Message';
 interface User {
   username: string;
   id: string;
+  role: number;
 }
 
 interface messageProps {
@@ -23,20 +24,20 @@ export function initSocketController(io: SocketIOServer): void {
     console.log(`Client connected: ${socket.id}`);
 
     socket.on('login', (data: User) => {
-        console.log(`User logged in: ${data.username} (${socket.id})`);
-        users.set(data.username, {username: data.username, id: socket.id});
+      console.log(`User logged in: ${data.username} (${socket.id})`);
+      users.set(data.username, {username: data.username, id: socket.id, role: data.role});
 
-        socket.emit('loggedIn', `Welcome, ${data.username}! You are now online.`);
+      socket.emit('loggedIn', `Welcome, ${data.username}! You are now online.`);
 
-        io.emit('onlineUsers', users);
+      io.emit('onlineUsers', users);
     });
 
     socket.on('register', (data: messageProps) => {
       console.log(data.message);
     });
 
-    socket.on('reconnected', (data: { username: string }) => {
-      users.set(data.username, {username: data.username, id: socket.id});
+    socket.on('reconnected', (data: { username: string, role: number }) => {
+      users.set(data.username, {username: data.username, id: socket.id, role: data.role});
       console.log(`User ${data.username} reconnected with new socket ID ${socket.id}`);
       io.emit('onlineUsers', Array.from(users.values()));
     });
