@@ -1,6 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getAuthToken } from '../components/authToken/helperAuth'; 
 
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  role: number;
+  username: string;
+}
+
 export const UserApi = createApi({
   reducerPath: 'UserApi',
   baseQuery: fetchBaseQuery({
@@ -32,9 +40,9 @@ export const UserApi = createApi({
       }),
     }),
 
-    getUser: builder.query({
-      query: (page) => ({
-        url: `/users/${page}`,  
+    getUser: builder.query<{ users: User[]; totalPage: number }, {page: number, search: string}>({
+      query: ({page, search}) => ({
+        url: `/users/${page}?q=${search}`, // Changed API URL format
         method: 'GET',
       }),
     }),

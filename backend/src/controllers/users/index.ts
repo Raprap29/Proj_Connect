@@ -4,13 +4,16 @@ import userService from "@/services/userService";
 export const getUsers = async (c: Context) => {
     const {page} = c.req.param();
 
+    const search = c.req.query('q');
+
+    const searchQuery = search as string | undefined;
     const pageNumber = page as number | undefined;
 
     if(!pageNumber){
         throw new RequiredError("Input pages number");
     }
 
-    const response = await userService.getAllUsers(pageNumber);
+    const response = await userService.getAllUsers(pageNumber, searchQuery);
 
     return c.json(response, 200);
 }

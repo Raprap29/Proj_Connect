@@ -9,6 +9,7 @@ import Message from "../pages/Main/Chat";
 import {io} from "socket.io-client";
 import CustomerChat from "../pages/Main/ChatCustomer";
 import CustomerRoute from "./customerRoute";
+import UserMaintenance from "../pages/Main/Maintenance/User";
 
 const URL = 'ws://localhost:5000';
 
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
             {
                 path: '/message',
                 element: <PrivateRoute Element={Message} title="Message | System" socket={socket} />
+            },
+            {
+                path: '/maintenance/users',
+                element: <PrivateRoute Element={UserMaintenance} title="Maintenance Users | System" socket={socket} />
             }
         ]
     }, 

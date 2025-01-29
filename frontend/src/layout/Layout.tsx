@@ -11,9 +11,9 @@ export const Layout = () => {
 
 export const LayoutPrivate = () => {
     return(
-        <div className="flex">
+        <div className="w-full">
             <Navbar />
-            <div className="ml-[270px]">
+            <div className="ml-[0px] lg:ml-[257px]">
                 <Outlet />
             </div>
         </div>

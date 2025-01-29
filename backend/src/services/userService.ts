@@ -34,15 +34,29 @@ class UserService {
   }
 
   // Get all users
-  async getAllUsers(page: number) {
+  async getAllUsers(page: number, searchQuery: string = "") {
     try {
-      const limit = 10;
+      const limit = 2;
       const skip = (page - 1) * limit;
-      const totalUsers = await UserModel.countDocuments();
 
+      const searchCondition = {
+        $or: [
+          { username: { $regex: searchQuery, $options: 'i' } },
+          { firstName: { $regex: searchQuery, $options: 'i' } },
+          { lastName: { $regex: searchQuery, $options: 'i' } },
+          { $expr: { $regexMatch: { input: { $concat: ['$firstName', ' ', '$lastName'] }, regex: searchQuery, options: 'i' } } }
+        ],
+      };
+  
+
+      const totalUsers = await UserModel.countDocuments(searchCondition);
+  
       const totalPage = Math.ceil(totalUsers / limit);
-      const users = await UserModel.find().limit(limit).skip(skip);
-      return {users: users, totalPage: totalPage};
+      const users = await UserModel.find(searchCondition)
+      .limit(limit)
+      .skip(skip);
+  
+      return { users: users, totalPage: totalPage };
     } catch (error) {
       throw new Error('Error fetching users: ' + error);
     }
