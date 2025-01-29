@@ -44,7 +44,8 @@ class UserService {
           { username: { $regex: searchQuery, $options: 'i' } },
           { firstName: { $regex: searchQuery, $options: 'i' } },
           { lastName: { $regex: searchQuery, $options: 'i' } },
-          { $expr: { $regexMatch: { input: { $concat: ['$firstName', ' ', '$lastName'] }, regex: searchQuery, options: 'i' } } }
+          { $expr: { $regexMatch: { input: { $concat: ['$firstName', ' ', '$lastName'] },
+           regex: searchQuery, options: 'i' } } }
         ],
       };
   

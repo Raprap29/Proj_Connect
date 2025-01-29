@@ -85,19 +85,19 @@ const TableData: React.FC<PropsTable> = ({
             <nav aria-label="Page navigation" className="mt-5">
                 <ul className="flex items-center -space-x-px h-8 text-sm">
                     <li>
-                        <button type="button" onClick={handlePrevPage} className="cursor-pointer flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <button type="button" onClick={handlePrevPage} className={`${currentPage === 1 ? 'pointer-events-none bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-500 '} hover:bg-blue-500 ease-in-out transition duration-300 hover:text-white cursor-pointer flex items-center justify-center px-3 h-8 ms-0 leading-tight border border-gray-300 rounded-s-lg`}>
                             <MdKeyboardArrowLeft fontSize={24} />
                         </button>
                     </li>
                     {Array.from({ length: totalPages || 0 }, (_, index) => (
                         <li key={index}>
-                            <button type="button" onClick={() => handlePage(index + 1)} className={`${currentPage === index + 1 ? 'pointer-events-none bg-blue-500 text-white font-bold' : ''} cursor-pointer border-1 border-gray-400 flex items-center justify-center px-3 h-8 leading-tight`}>
+                            <button type="button" onClick={() => handlePage(index + 1)} className={`${currentPage === index + 1 ? 'pointer-events-none bg-blue-500 text-white font-bold' : ''} hover:bg-blue-500 ease-in-out transition duration-300 hover:text-white cursor-pointer border-1 border-gray-200 flex items-center justify-center px-3 h-8 leading-tight`}>
                                 {index + 1}
                             </button>
                         </li>
                     ))}
                     <li>
-                        <button type="button" onClick={handleNextPage} className="cursor-pointer flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <button type="button" onClick={handleNextPage} className={`${currentPage === totalPages ? 'pointer-events-none bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-500 '} hover:bg-blue-500 ease-in-out transition duration-300 hover:text-white cursor-pointer flex items-center justify-center px-3 h-8 leading-tight border border-gray-300 rounded-e-lg`}>
                             <MdKeyboardArrowRight fontSize={24} />
                         </button>
                     </li>
