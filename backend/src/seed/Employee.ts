@@ -27,7 +27,7 @@ mongoose.connect(MIGRATE_MONGO_URI)
 const seederEmployee = async () => {
   const Employee: any = [];
   const salt = 12;
-  const passwordHash = await bcrypt.hash(faker.internet.password(), salt);
+  const passwordHash = await bcrypt.hash('12345', salt);
   Array.from({ length: 10 }, () => {
     Employee.push({ firstName: faker.internet.username(), lastName: faker.internet.username(), username: faker.internet.username(), role: 1, password: passwordHash })
   })

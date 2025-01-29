@@ -34,16 +34,22 @@ class EmployeeService {
   }
 
   // Get all users
-  async getAllUsers() {
+  async getAllUsers(page: number) {
     try {
-      const users = await EmployeeModel.find();
-      return users;
+      const limit = 10;
+      const skip = (page - 1) * limit;
+      const totalUsers = await EmployeeModel.countDocuments();
+
+      const totalPage = Math.ceil(totalUsers / limit);
+
+      const users = await EmployeeModel.find().limit(limit).skip(skip);
+      return {users: users, totalPage: totalPage};
     } catch (error) {
       throw new Error('Error fetching users: ' + error);
     }
   }
 
-  async Login(username: string, password: string): Promise<string>{
+  async Login(username: string, password: string): Promise<any>{
     try{
 
       const checkUser = await EmployeeModel.findOne({username});
@@ -71,7 +77,7 @@ class EmployeeService {
 
       const token = await sign(payload, secretKey);
 
-      return token;
+      return {token: token, id: checkUser._id, username: checkUser.username};
       
     }catch(error){
       throw new Error("Error login: " + error);

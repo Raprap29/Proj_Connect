@@ -38,8 +38,11 @@ class UserService {
     try {
       const limit = 10;
       const skip = (page - 1) * limit;
+      const totalUsers = await UserModel.countDocuments();
+
+      const totalPage = Math.ceil(totalUsers / limit);
       const users = await UserModel.find().limit(limit).skip(skip);
-      return users;
+      return {users: users, totalPage: totalPage};
     } catch (error) {
       throw new Error('Error fetching users: ' + error);
     }

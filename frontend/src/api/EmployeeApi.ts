@@ -14,9 +14,24 @@ export const EmployeeApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    
+    registerUser: builder.mutation({
+      query: (credentials) => ({
+        url: '/register/employees',  
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
+
+    // Login user endpoint
+    loginUser: builder.mutation({
+      query: (credentials) => ({
+        url: '/login/employees',  
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
   }),
 });
 
 // Export hooks for use in components
-export const { } = EmployeeApi;
+export const { useLoginUserMutation, useRegisterUserMutation } = EmployeeApi;

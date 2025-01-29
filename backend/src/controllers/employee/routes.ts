@@ -5,7 +5,7 @@ import { DeleteUser, GetUser, getUsers, Login, Register, UpdateUser } from ".";
 import { authenticationMiddleware } from "@/middleware/authentication";
 
 const router = new Hono()
-    .get('/employees', getUsers)
+    .get('/employees/:page', authenticationMiddleware, getUsers)
     .post('/register/employees', Register)
     .post('/login/employees', Login)
     .get("/employee/:id", GetUser)

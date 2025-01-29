@@ -1,4 +1,4 @@
-GET http://localhost:5000/employees
+GET http://localhost:5000/employees/1
 Content-Type: application/json
 
 ###
@@ -13,6 +13,14 @@ Content-Type: application/json
     "lastName": "admin"
 }
 
+###
+POST http://localhost:5000/login/employees
+Content-Type: application/json
+
+{
+    "username": "Vincenza5",
+    "password": "12345"
+}
 ###
 
 POST http://localhost:5000/login

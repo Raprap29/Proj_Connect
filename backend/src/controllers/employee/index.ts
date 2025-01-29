@@ -2,10 +2,17 @@ import { NotFoundError, RequiredError } from "@/utils/errors";
 import { Context } from "hono";
 import employeeService from "@/services/employeeService";
 export const getUsers = async (c: Context) => {
+    const {page} = c.req.param();
 
-    const users = await employeeService.getAllUsers();
+    const pageNumber = page as number | undefined;
 
-    return c.json({data: users}, 200);
+    if(!pageNumber){
+        throw new RequiredError("Please input page");
+    }
+
+    const response = await employeeService.getAllUsers(pageNumber);
+
+    return c.json(response, 200);
 }
 
 export const Register = async (c:Context) => {
@@ -28,9 +35,9 @@ export const Login = async (c:Context) => {
 
     if(!body.username || !body.password) throw new RequiredError("* Required username and password");
 
-    const token = await employeeService.Login(body.username, body.password);
+    const response = await employeeService.Login(body.username, body.password);
 
-    return c.json({data: token}, 200);
+    return c.json({token: response.token, id: response.id, username: response.username}, 200);
 }
 
 export const GetUser = async (c:Context) => {

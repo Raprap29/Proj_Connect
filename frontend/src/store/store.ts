@@ -14,7 +14,10 @@ const reducer = combineReducers({
 const persisConfig = {
     key: "root",
     storage,
-    blacklist: [UserApi.reducerPath]
+    blacklist: [
+        UserApi.reducerPath, // Don't persist the UserApi cache
+        EmployeeApi.reducerPath, // Don't persist the EmployeeApi cache
+    ],
 }
 
 const persistedReducer = persistReducer(persisConfig, reducer);

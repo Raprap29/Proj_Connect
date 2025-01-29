@@ -10,9 +10,9 @@ export const getUsers = async (c: Context) => {
         throw new RequiredError("Input pages number");
     }
 
-    const users = await userService.getAllUsers(pageNumber);
+    const response = await userService.getAllUsers(pageNumber);
 
-    return c.json({data: users}, 200);
+    return c.json(response, 200);
 }
 
 export const Register = async (c:Context) => {

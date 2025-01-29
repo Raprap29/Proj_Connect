@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server';
-import { Context, Hono } from 'hono';
+import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { routes } from './controllers/routes';
 import { errorHandlerMiddleware } from './middleware/errorhandler';
@@ -7,13 +7,8 @@ import dbConnect from './config/dbConnection';
 import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import { initSocketController } from './controllers/socket';
-import { fileURLToPath } from 'url';
 import { serveStatic } from '@hono/node-server/serve-static';
-import path from 'path';
-import http from 'http';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const app = new Hono();
 
 app.use(cors());
