@@ -124,7 +124,9 @@ class EmployeeService {
       }
 
       if(password){
-        updateData.password = password;
+        const salt = 12;
+        const passwordHash = await bcrypt.hash(password, salt);
+        updateData.password = passwordHash;
       }
 
       const existingUser = await EmployeeModel.findOne({username: username, _id: {$ne: userId}});

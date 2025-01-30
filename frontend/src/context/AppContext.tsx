@@ -30,6 +30,9 @@ interface ContextProp {
     id: string;
     setId: Dispatch<SetStateAction<string>>;
 
+    setToggleForm: Dispatch<SetStateAction<boolean>>;
+    toggleForm: boolean;
+
 }
 
 interface ProviderProps {
@@ -44,6 +47,7 @@ const AppContext: React.FC<ProviderProps> = ({ children }) => {
     const [showLoading, setShowLoading] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [addModal, setAddModal] = useState(false);
+    const [toggleForm, setToggleForm] = useState(false);
     const [id, setId] = useState("");
     const [users, setUsers]  = useState<UserProps[]>([]);
 
@@ -68,7 +72,10 @@ const AppContext: React.FC<ProviderProps> = ({ children }) => {
             setUsers,
 
             id,
-            setId
+            setId,
+
+            toggleForm,
+            setToggleForm,
 
          }}>
             {children}
