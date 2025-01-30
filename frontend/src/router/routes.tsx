@@ -10,6 +10,7 @@ import {io} from "socket.io-client";
 import CustomerChat from "../pages/Main/ChatCustomer";
 import CustomerRoute from "./customerRoute";
 import UserMaintenance from "../pages/Main/Maintenance/User";
+import EmployeeMaintenance from "../pages/Main/Maintenance/Employee";
 
 const URL = 'ws://localhost:5000';
 
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
             {
                 path: '/maintenance/users',
                 element: <PrivateRoute Element={UserMaintenance} title="Maintenance Users | System" socket={socket} />
+            },
+            {
+                path: '/maintenance/employees',
+                element: <PrivateRoute Element={EmployeeMaintenance} title="Maintenance Users | System" socket={socket} />
             }
         ]
     }, 

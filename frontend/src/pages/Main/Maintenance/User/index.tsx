@@ -1,22 +1,48 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { useGetUserQuery } from '../../../../api/UserApi';
 import TableData from '../../../../components/table/TableData';
 import { ContextData } from '../../../../context/AppContext';
-const UserMaintenance = () => {
-  
-  const context = useContext(ContextData);
+import { 
+  useUserInfoQuery,
 
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+
+} from "../../../../api/UserApi";
+import TitleNavbar from '../../../../components/TItleNavbar';
+
+interface UserProps {
+  _id: string | undefined;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  role: number | undefined;
+  username: string | undefined;
+}
+
+const UserMaintenance = () => {
+
+  const context = useContext(ContextData);
+    
   if(!context){
     throw new Error("PageComponent must be used within an AppContext provider");
   }
 
-  const {page, setPages } = context;
+  const {page, setPages, id } = context;
 
   const tableHeader: string[] = ['Full Name', 'Username', 'Actions'];
 
   const [search, setSearch] = useState("");
-  const {data, isLoading: loadingUser} = useGetUserQuery({page, search});
-  
+  const { data: infoUser, isLoading: LoadingInfo, refetch: userRefetch } = useUserInfoQuery({ _id: id });
+  const { data, isLoading: loadingUser, refetch } = useGetUserQuery({page, search});
+  const [updateUser, {isLoading: LoadingUpdate}] = useUpdateUserMutation();
+  const [deleteUser, {isLoading: LoadingDelete}] = useDeleteUserMutation();
+
+  const userQuery: UserProps | undefined = infoUser?.user ? infoUser.user : undefined;
+
+  useEffect(() => {
+    refetch();
+  }, [page, search, refetch]);
+
   const handleNextPage = () => {
     if (data?.totalPage && page < data.totalPage) {
       setPages((prevPage) => prevPage + 1);
@@ -36,10 +62,10 @@ const UserMaintenance = () => {
 
   return (
     <>
-      <div className='py-4 px-5 bg-white border-b-2 border-gray-300 shadow-md'>
-        <p className='font-bold text-2xl'>Manage Users</p>
-      </div>
+      <TitleNavbar title='Manage Users' />
       <TableData 
+        refetch={refetch}
+
         users={data?.users} 
         totalPages={data?.totalPage}
         currentPage={page} 
@@ -50,6 +76,18 @@ const UserMaintenance = () => {
         loading={loadingUser}
 
         setSearch={setSearch}
+
+        updateMutation={updateUser}
+        LoadingUpdate={LoadingUpdate}
+
+        deleteMutation={deleteUser}
+        LoadingDelete={LoadingDelete}
+
+        userQuery={userQuery}
+        LoadingInfo={LoadingInfo}
+        userRefetch={userRefetch}
+
+        isAddModal={false}
         />
     </>
   )

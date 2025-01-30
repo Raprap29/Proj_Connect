@@ -3,6 +3,7 @@ import { Context } from "hono";
 import employeeService from "@/services/employeeService";
 export const getUsers = async (c: Context) => {
     const {page} = c.req.param();
+    const {search} = c.req.query();
 
     const pageNumber = page as number | undefined;
 
@@ -10,7 +11,7 @@ export const getUsers = async (c: Context) => {
         throw new RequiredError("Please input page");
     }
 
-    const response = await employeeService.getAllUsers(pageNumber);
+    const response = await employeeService.getAllUsers(pageNumber, search);
 
     return c.json(response, 200);
 }

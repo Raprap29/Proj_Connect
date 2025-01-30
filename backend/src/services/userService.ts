@@ -2,7 +2,7 @@
 
 import { ConflictError, NotFoundError, RequiredError } from '@/utils/errors';
 import UserModel from '../models/User';
-import { decode, sign } from 'hono/jwt'
+import { sign } from 'hono/jwt'
 import bcrypt from "bcryptjs";
 class UserService {
 
@@ -36,7 +36,7 @@ class UserService {
   // Get all users
   async getAllUsers(page: number, searchQuery: string = "") {
     try {
-      const limit = 10;
+    const limit = 10;
       const skip = (page - 1) * limit;
 
       const searchCondition = {

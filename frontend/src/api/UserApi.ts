@@ -9,6 +9,13 @@ interface User {
   username: string;
 }
 
+interface UserUpdate {
+  firstName: string;
+  lastName: string;
+  username: string;
+  password: string;
+}
+
 export const UserApi = createApi({
   reducerPath: 'UserApi',
   baseQuery: fetchBaseQuery({
@@ -40,6 +47,26 @@ export const UserApi = createApi({
       }),
     }),
 
+    updateUser: builder.mutation<UserUpdate, { _id: string | undefined, updates: Partial<UserUpdate> }>({
+      query: ({ _id, updates }) => {
+          if (!_id) {
+              throw new Error("User ID is required for update.");
+          }
+          return {
+              url: `/user/update/${_id}`,
+              method: 'PUT',
+              body: updates,
+          };
+      },
+    }),
+
+    deleteUser: builder.mutation<void, {_id: string | undefined}>({
+      query: ({ _id }) => ({
+        url: `/user/delete/${_id}`,
+        method: 'DELETE',
+      })
+    }),
+
     getUser: builder.query<{ users: User[]; totalPage: number }, {page: number, search: string}>({
       query: ({page, search}) => ({
         url: `/users/${page}?q=${search}`, // Changed API URL format
@@ -60,6 +87,9 @@ export const UserApi = createApi({
 export const { 
   useRegisterUserMutation, 
   useLoginUserMutation,
+
+  useUpdateUserMutation,
+  useDeleteUserMutation,
 
   useGetUserQuery,
   useUserInfoQuery

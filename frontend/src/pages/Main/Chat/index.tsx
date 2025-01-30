@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Socket } from "socket.io-client";
 import { getAuthToken } from '../../../components/authToken/helperAuth';
+import TitleNavbar from '../../../components/TItleNavbar';
 
 interface SocketProps {
     socket: Socket;
@@ -46,6 +47,7 @@ const Message: React.FC<SocketProps> = ({socket}) => {
 
     return (
         <React.Fragment>
+            <TitleNavbar title='Manage Message Customers' />
             <div>
                 {onlineUsers && onlineUsers?.map((item, index) => (
                     <div key={index}>
