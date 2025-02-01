@@ -14,6 +14,7 @@ const socket = io(URL, {
 });
 
 interface UserProps {
+    id: string;
     username: string;
     firstName: string;
     lastName: string;
@@ -34,6 +35,7 @@ const Navbar = () => {
                 const response = dispatch(logout());
                 await socket.emit('logout', {
                     username: res.username,
+                    id: res.id,
                 });
                 
                 if(response){

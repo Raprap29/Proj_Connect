@@ -12,6 +12,7 @@ interface ElementProp {
 }
 
 interface UserProps {
+  id: string;
   username: string;
   firstName: string;
   lastName: string;
@@ -29,7 +30,7 @@ const PrivateRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
       document.title = title;
 
       // Emit socket event
-      socket.emit("reconnected", { username: decoded.username, role: decoded.role });
+      socket.emit("reconnected", { username: decoded.username, role: decoded.role, id: decoded.id });
 
       return () => {
         // Clean up the specific event listener

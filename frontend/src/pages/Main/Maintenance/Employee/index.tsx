@@ -35,7 +35,6 @@ const EmployeeMaintenance = () => {
     const { data, isLoading: loadingEmployee, refetch } = useGetEmployeeQuery({page, search});
     const [updateEmployee, {isLoading: LoadingUpdate}] = useUpdateEmployeeMutation();
     const [deleteEmployee, {isLoading: LoadingDelete}] = useDeleteEmployeeMutation();
-
     const [addEmployee, {isLoading: LoadingAdd}] = useRegisterEmployeeMutation();
 
 

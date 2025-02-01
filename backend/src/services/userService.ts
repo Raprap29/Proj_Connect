@@ -79,6 +79,7 @@ class UserService {
       }
 
       const payload = {
+        id: checkUser._id,
         username: checkUser.username,
         firstName: checkUser.firstName,
         lastName: checkUser.lastName,

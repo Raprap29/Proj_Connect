@@ -19,7 +19,7 @@ const LoginAdmin: React.FC<SocketProps> = ({ socket, toggleModal }) => {
     const navigate = useNavigate();
 
     const [loginUser, {isLoading: LoginLoading, error: LoginError}] = useLoginUserMutation();
-
+    const [error, setError] = useState("");
     const [form, setForm] = useState<FormProps>({
         username: '',
         password: '',
@@ -46,6 +46,16 @@ const LoginAdmin: React.FC<SocketProps> = ({ socket, toggleModal }) => {
                 password: '',
             })
 
+            if(data.error){
+                if(data.error.status == 404){
+                    setError("* Username and password do not match.");
+                    return;
+                }else{
+                    setError("");
+                }
+            }
+
+
             if(data.token){
 
                 await socket.emit('login', {
@@ -65,6 +75,11 @@ const LoginAdmin: React.FC<SocketProps> = ({ socket, toggleModal }) => {
 
     return (
         <div className={`absolute top-1/2 left-1/2  ${!toggleModal ? '-translate-x-1/2' : '-translate-x-[9999px]'} transition duration-300 ease-in-out transform -translate-y-1/2 max-w-md w-full`}>
+            {error && (
+                <div className='border-3 rounded-sm border-solid border-red-600 mb-5 bg-red-500 py-4 px-3'>
+                    <p className='text-center font-bold text-white'>{error}</p>
+                </div>
+            )}
             <form onSubmit={handleSubmit} className=" bg-white w-full p-5 rounded-lg">
                 <h1 className='font-medium text-center text-3xl mb-2'>LOGIN ADMIN</h1>
                 <div className="relative z-0 w-full mb-5 group">

@@ -3,6 +3,7 @@ import Navbar from "../components/navbar";
 import Loading from "../components/loading";
 import { useContext } from "react";
 import { ContextData } from "../context/AppContext";
+import NavbarCustomer from "../components/navbarCustomer";
 
 export const Layout = () => {
     return (
@@ -36,7 +37,10 @@ export const LayoutPrivate = () => {
 export const LayoutCustomer = () => {
     return(
         <>
-            <Outlet />
+            <NavbarCustomer />
+            <div className="pt-16">
+                <Outlet />
+            </div>
         </>
     )
 }

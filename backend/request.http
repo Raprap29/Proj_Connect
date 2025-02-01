@@ -2,6 +2,13 @@ GET http://localhost:5000/users/1
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlZpbmNlbnphNSIsImZpcnN0TmFtZSI6IkVsaXphYmV0aC5BYmJvdHQiLCJsYXN0TmFtZSI6IkRldmVuX0dyZWVuZmVsZGVyIiwiYXV0aCI6dHJ1ZSwicm9sZSI6MSwiZXhwIjoxNzM4NzM5Njc2fQ.ZQzPkYBngsv6XSbeX_kw5UXewifTHEZp5th_zQzS7CE
 
+
+###
+GET http://localhost:5000/employees/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlZpbmNlbnphNSIsImZpcnN0TmFtZSI6IkVsaXphYmV0aC5BYmJvdHQiLCJsYXN0TmFtZSI6IkRldmVuX0dyZWVuZmVsZGVyIiwiYXV0aCI6dHJ1ZSwicm9sZSI6MSwiZXhwIjoxNzM5MDAwNDIxfQ.qAp5kJjSOX8cLcfJYIWNouZRdfwmCfeJGEm2bPJtkxU
+
+
 ###
 
 POST http://localhost:5000/register

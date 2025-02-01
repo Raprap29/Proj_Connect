@@ -25,7 +25,9 @@ export function initSocketController(io: SocketIOServer): void {
 
     socket.on('login', (data: User) => {
       console.log(`User logged in: ${data.username} (${socket.id})`);
-      users.set(data.username, {username: data.username, id: socket.id, role: data.role});
+      if(!users.has(data.id)){
+        users.set(data.id, {username: data.username, id: socket.id, role: data.role});
+      }
 
       socket.emit('loggedIn', `Welcome, ${data.username}! You are now online.`);
 
@@ -36,12 +38,16 @@ export function initSocketController(io: SocketIOServer): void {
       console.log(data.message);
     });
 
-    socket.on('reconnected', (data: { username: string, role: number }) => {
-      users.set(data.username, {username: data.username, id: socket.id, role: data.role});
-      console.log(`User ${data.username} reconnected with new socket ID ${socket.id}`);
+    socket.on('reconnected', (data: { username: string, role: number, id: string }) => {
+      users.set(data.id, {username: data.username, id: socket.id, role: data.role});
+      console.log(`User ${data.id} reconnected with new socket ID ${socket.id}`);
       io.emit('onlineUsers', Array.from(users.values()));
     });
-    
+
+    socket.on('getonline', () => {
+      io.emit('onlineUsers', Array.from(users.values()));
+    });
+
     socket.on('privateMessage', async ({ to, message, userId, status }: { to: string; message: string, userId: string, status: number }) => {
         const sender = getUsernameBySocketId(socket.id);
         
@@ -69,17 +75,13 @@ export function initSocketController(io: SocketIOServer): void {
           });
           console.log(`Private message from ${sender} to ${to}: ${message}`);
         // }
-
     })
 
     socket.on('logout', (data: User) => {
-      const username = getUsername(data.username);
-
-      if(username){
-        users.delete(username);
-        console.log(`User disconnected: ${username} (${socket.id})`);
-        
-        io.emit('onlineUsers', Array.from(users.keys()));
+      const id = data.id;
+      if(id){
+        users.delete(id);
+        io.emit('onlineUsers', Array.from(users.values()));
       }
 
     });

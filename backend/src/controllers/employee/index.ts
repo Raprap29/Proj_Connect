@@ -3,15 +3,16 @@ import { Context } from "hono";
 import employeeService from "@/services/employeeService";
 export const getUsers = async (c: Context) => {
     const {page} = c.req.param();
-    const {search} = c.req.query();
+    const search = c.req.query('q');
 
     const pageNumber = page as number | undefined;
+    const searchQuery = search as string | undefined;
 
     if(!pageNumber){
         throw new RequiredError("Please input page");
     }
 
-    const response = await employeeService.getAllUsers(pageNumber, search);
+    const response = await employeeService.getAllUsers(pageNumber, searchQuery);
 
     return c.json(response, 200);
 }

@@ -12,6 +12,7 @@ interface ElementProp {
 }
 
 interface UserProps {
+  id: string;
   username: string;
   firstName: string;
   lastName: string;
@@ -27,8 +28,8 @@ const CustomerRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
     if (token && !isTokenExpired(token)) {
       const decoded: UserProps = jwtDecode(token); // Decode token to get user info
       document.title = title;
-
-      socket.emit("reconnected", { username: decoded.username, role: decoded.role });
+    
+      socket.emit("reconnected", { username: decoded.username, role: decoded.role, id: decoded.id });
 
       return () => {
         socket.off("reconnected");

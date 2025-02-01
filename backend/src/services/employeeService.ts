@@ -61,21 +61,21 @@ class EmployeeService {
   }
 
   async Login(username: string, password: string): Promise<any>{
-    try{
 
       const checkUser = await EmployeeModel.findOne({username});
 
       if(!checkUser){
-        throw new NotFoundError("* Username and password is incorrect.")
+        throw new NotFoundError("* Username and password do not match.")
       }
 
       const isValid = await this.verifyPassword(password, checkUser.password);
 
       if(!isValid){
-        throw new Error("* Username and password is incorrect.");
+        throw new NotFoundError("* Username and password do not match.");
       }
 
       const payload = {
+        id: checkUser._id,
         username: checkUser.username,
         firstName: checkUser.firstName,
         lastName: checkUser.lastName,
@@ -90,9 +90,6 @@ class EmployeeService {
 
       return {token: token, id: checkUser._id, username: checkUser.username};
       
-    }catch(error){
-      throw new Error("Error login: " + error);
-    }
   }
 
   // Get user by ID

@@ -47,7 +47,7 @@ const Register: React.FC<SocketProps> = ({ socket }) => {
                 firstName: firstname,
                 lastName: lastname
             }).unwrap();
-
+            
             if(response.status){
                 await socket.emit('register', {
                     message: response.message,

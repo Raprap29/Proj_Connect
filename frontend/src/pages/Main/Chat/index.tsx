@@ -26,6 +26,7 @@ const Message: React.FC<SocketProps> = ({socket}) => {
 
         const token = getAuthToken();
         if (!token) return; // If no token is present, exit early
+        socket.emit("getonline");
 
         socket.on('receiveMessage', (data) => {
             console.log(data);
@@ -34,6 +35,7 @@ const Message: React.FC<SocketProps> = ({socket}) => {
         socket.on('onlineUsers', (data) => {
             if (Array.isArray(data)) {
                 const filterUsers = data.filter((item: OnlineProps) => item.role === 0);
+                console.log(filterUsers);
                 setOnlineUsers(filterUsers);
             }
         });
