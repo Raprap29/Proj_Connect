@@ -4,12 +4,12 @@ interface User {
   username: string;
   id: string;
   role: number;
+  _id: string;
 }
 
 interface messageProps {
   message: string;
 }
-
 
 // Map to store registered users with their socket IDs
 const users: Map<string, User> = new Map();
@@ -24,9 +24,9 @@ export function initSocketController(io: SocketIOServer): void {
     console.log(`Client connected: ${socket.id}`);
 
     socket.on('login', (data: User) => {
-      console.log(`User logged in: ${data.username} (${socket.id})`);
+      console.log(`User logged in: ${data.id} (${socket.id})`);
       if(!users.has(data.id)){
-        users.set(data.id, {username: data.username, id: socket.id, role: data.role});
+        users.set(data.id, {username: data.username, id: socket.id, role: data.role, _id: data.id});
       }
 
       socket.emit('loggedIn', `Welcome, ${data.username}! You are now online.`);
@@ -38,9 +38,12 @@ export function initSocketController(io: SocketIOServer): void {
       console.log(data.message);
     });
 
+    socket.on('send_agent', (data) => {
+      socket.broadcast.emit("receive_agent", {message: data.message, userId: data.userId, status: data.status});
+    });
+
     socket.on('reconnected', (data: { username: string, role: number, id: string }) => {
-      users.set(data.id, {username: data.username, id: socket.id, role: data.role});
-      console.log(`User ${data.id} reconnected with new socket ID ${socket.id}`);
+      users.set(data.id, {username: data.username, id: socket.id, role: data.role, _id: data.id});
       io.emit('onlineUsers', Array.from(users.values()));
     });
 
@@ -49,18 +52,14 @@ export function initSocketController(io: SocketIOServer): void {
     });
 
     socket.on('privateMessage', async ({ to, message, userId, status }: { to: string; message: string, userId: string, status: number }) => {
-        const sender = getUsernameBySocketId(socket.id);
-        
+        const sender = getUsernameBySocketId(userId);
+        console.log(sender)
         if (!sender) {
           socket.emit('error', 'You must log in before sending messages.');
           return;
         }
   
-        const recipient = users.get(to);
-        if (!recipient) {
-          socket.emit('error', `User "${to}" is not online.`);
-          return;
-        }
+        console.log(to, message, userId, status);
 
         // const AddMessage = await MessageModel.create({
         //     userId: userId,
@@ -69,11 +68,12 @@ export function initSocketController(io: SocketIOServer): void {
         // });
 
         // if(AddMessage){
-          socket.to(recipient.id).emit('receiveMessage', {
+          socket.to(sender).emit('receiveMessage', {
             from: sender,
-            message,
+            message: message,
+            status: status,
           });
-          console.log(`Private message from ${sender} to ${to}: ${message}`);
+          // console.log(`Private message from ${sender} to ${to}: ${message}`);
         // }
     })
 
@@ -107,11 +107,12 @@ export function initSocketController(io: SocketIOServer): void {
  * @returns The username or undefined if not found.
  */
 function getUsernameBySocketId(socketId: string): string | undefined {
-  for (const [username, user] of users.entries()) {
-    if (user.id === socketId) {
-      return username;
+  for (const [_id, user] of users.entries()) {
+    if (_id === socketId) {
+      return user.id;
     }
   }
+
   return undefined;
 }
 

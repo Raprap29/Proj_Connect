@@ -5,10 +5,12 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from "redux-persist/lib/storage";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { EmployeeApi } from "../api/EmployeeApi";
+import { AiApi } from "../api/AiApi";
 const reducer = combineReducers({
     user: AuthReducer,
     [UserApi.reducerPath]: UserApi.reducer,
     [EmployeeApi.reducerPath]: EmployeeApi.reducer,
+    [AiApi.reducerPath]: AiApi.reducer,
 })
 
 const persisConfig = {
@@ -17,6 +19,7 @@ const persisConfig = {
     blacklist: [
         UserApi.reducerPath, // Don't persist the UserApi cache
         EmployeeApi.reducerPath, // Don't persist the EmployeeApi cache
+        AiApi.reducerPath,
     ],
 }
 
@@ -27,7 +30,8 @@ const store = configureStore({
     middleware: (getDefaultMiddleware) => 
         getDefaultMiddleware({serializableCheck: false,})
             .concat(UserApi.middleware)
-            .concat(EmployeeApi.middleware),
+            .concat(EmployeeApi.middleware)
+            .concat(AiApi.middleware),
 });
 
 const persistor = persistStore(store);

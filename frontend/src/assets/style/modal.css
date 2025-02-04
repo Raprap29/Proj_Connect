@@ -24,6 +24,15 @@
     position: relative;
 }
 
+.modal-content-message {
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 8px;
+    position: relative;
+}
+
+
 .active{
     scale: 1;
 }

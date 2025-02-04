@@ -16,7 +16,7 @@ const wrapMulterMiddleware = (middleware: any) => {
 };
 
 const router = new Hono()
-  .post('/ai/message', MessageAiController)
+  .post('/ai/message', authenticationMiddleware, MessageAiController)
   .post(
     '/ai/image',
     wrapMulterMiddleware(upload.single('image')),
