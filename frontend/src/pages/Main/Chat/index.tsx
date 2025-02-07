@@ -56,6 +56,7 @@ const Message: React.FC<SocketProps> = ({socket}) => {
         username: '',
         status: false,
     }]);
+    
     const {data: users} = useGetUserQuery({page, search});
     
     const handleToggleMessagae = (username: string, id: string) => {

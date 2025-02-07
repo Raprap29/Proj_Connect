@@ -1,5 +1,6 @@
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import MessageModel from '@/models/Message';
+import messageService from '@/services/messageService';
 interface User {
   username: string;
   id: string;
@@ -38,8 +39,13 @@ export function initSocketController(io: SocketIOServer): void {
       console.log(data.message);
     });
 
-    socket.on('send_agent', (data) => {
+    socket.on('send_agent', async (data) => {
+      // Service Message
+     const success = await messageService.ADD_MESSAGES(data);
+
+     if(success){
       socket.broadcast.emit("receive_agent", {message: data.message, userId: data.userId, status: data.status});
+     }
     });
 
     socket.on('reconnected', (data: { username: string, role: number, id: string }) => {
@@ -51,30 +57,22 @@ export function initSocketController(io: SocketIOServer): void {
       io.emit('onlineUsers', Array.from(users.values()));
     });
 
-    socket.on('privateMessage', async ({ to, message, userId, status }: { to: string; message: string, userId: string, status: number }) => {
+    socket.on('privateMessage', async ({ to, message, userId, status }: { to: string; message: string, userId: string, status: number  }) => {
         const sender = getUsernameBySocketId(userId);
-        console.log(sender)
         if (!sender) {
           socket.emit('error', 'You must log in before sending messages.');
           return;
         }
-  
-        console.log(to, message, userId, status);
 
-        // const AddMessage = await MessageModel.create({
-        //     userId: userId,
-        //     message: message,
-        //     status: status, 
-        // });
+        const success = await messageService.ADD_MESSAGES({message, userId, status});
 
-        // if(AddMessage){
+        if(success){
           socket.to(sender).emit('receiveMessage', {
             from: sender,
             message: message,
             status: status,
           });
-          // console.log(`Private message from ${sender} to ${to}: ${message}`);
-        // }
+        }
     })
 
     socket.on('logout', (data: User) => {

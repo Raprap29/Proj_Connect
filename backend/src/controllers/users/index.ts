@@ -1,6 +1,7 @@
 import { NotFoundError, RequiredError } from "@/utils/errors";
 import { Context } from "hono";
 import userService from "@/services/userService";
+import MessageCheckModel from "@/models/MessageCheck";
 export const getUsers = async (c: Context) => {
     const {page} = c.req.param();
 
@@ -16,6 +17,22 @@ export const getUsers = async (c: Context) => {
     const response = await userService.getAllUsers(pageNumber, searchQuery);
 
     return c.json(response, 200);
+}
+
+export const CheckStatusTickets = async (c: Context) => {
+    const body = await c.req.json();
+
+    if(!body.userId){
+        throw new RequiredError("Please fill the fields");
+    }
+
+    const findTicket = await MessageCheckModel.findOne({_id: body.userId, status: 0, ticketId: body.ticketId});
+
+    if(!findTicket){
+        throw new NotFoundError("No tickets");
+    }
+
+    return c.json({ticket: findTicket.ticketId}, 200);
 }
 
 export const Register = async (c:Context) => {

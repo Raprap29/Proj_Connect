@@ -37,13 +37,14 @@ const PrivateRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
         socket.off("reconnected");
       };
     } else {
-      // If token is invalid, remove it
       Cookies.remove("authToken");
+      Cookies.remove('userId');
     }
   }, [title, socket, token]);
 
   // Redirect if no token or token is expired
   if (!token || isTokenExpired(token)) {
+    Cookies.remove("authToken");
     Cookies.remove("authToken");
     return <Navigate to="/" replace />; // `replace` ensures no back navigation to this route
   }

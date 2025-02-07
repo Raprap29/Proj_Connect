@@ -77,7 +77,7 @@ const CustomerChat: FC<CustomerProps> = ({ socket }) => {
         if(!isLoading){
           setMessages(prevMessages => [
             ...prevMessages,
-            { username: 'Ralph', status: 2, message: response.message }
+            { username: res.username, status: 2, message: response.message }
           ]);
         }
 

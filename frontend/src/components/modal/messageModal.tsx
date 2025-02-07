@@ -1,8 +1,9 @@
-import { FormEvent, useContext, useEffect, KeyboardEvent, useState, ChangeEvent, FC, useRef } from 'react'
+import { FormEvent, useContext, useEffect, KeyboardEvent, useState, ChangeEvent, FC, useRef, useMemo  } from 'react'
 import { ContextData } from '../../context/AppContext'
 import { FaTimes } from 'react-icons/fa';
 import { Socket } from 'socket.io-client';
-
+import { useGetMessagesQuery } from '../../api/MessageApi';
+import { skipToken } from '@reduxjs/toolkit/query';
 interface MessageProps {
     message: string;
 }
@@ -14,17 +15,21 @@ interface SockerProps {
 }
 
 interface messagesProps {
-    userId: string;
     status: number;
+    userId: string;
     message: string;
 }
 
 
-const MessageModal: FC<SockerProps> = ({ socket, username, userId }) => {
+const MessageModal: FC<SockerProps> = ({ socket, username, userId}) => {
     
     const context = useContext(ContextData);
     const messageRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const { data: messagesData } = useGetMessagesQuery(
+        userId ? { userId } : skipToken
+    );
+    
     const [messages, setMessages] = useState<messagesProps[]>([]);
 
     if(!context) {
@@ -35,6 +40,21 @@ const MessageModal: FC<SockerProps> = ({ socket, username, userId }) => {
     const [message, setMessage] = useState<MessageProps>({
         message: '',
     });
+
+    const memoizedMessages = useMemo(() => {
+        if (messagesData) {
+            return [
+                ...messagesData.data.map((msg: messagesProps) => ({
+                    userId: msg.userId,
+                    status: msg.status,
+                    message: msg.message
+                })),
+                ...messages
+            ];
+        }
+        return messages;
+    }, [messagesData, messages]);
+
 
     const handleSendMessage = (e: FormEvent) => {
         e.preventDefault();
@@ -93,12 +113,15 @@ const MessageModal: FC<SockerProps> = ({ socket, username, userId }) => {
 
     }, [toggleForm, socket, messages, userId])
 
+
+    
     useEffect(() => {
         if (messageRef.current) {
             messageRef.current.scrollTop = messageRef.current.scrollHeight;
         }
-    }, [messages]);
-    
+
+    }, [messageRef, memoizedMessages]);
+
 
     return (
         <div className={`modal-overlay ${toggleForm && ('active')}`}>
@@ -111,7 +134,7 @@ const MessageModal: FC<SockerProps> = ({ socket, username, userId }) => {
                         </div>
                     </div>
                     <div ref={messageRef} className="flex-grow max-h-[360px] h-full overflow-y-auto p-4 space-y-4 bg-red-100">
-                        {messages.map((message, index) => (
+                        {memoizedMessages.map((message, index) => (
                             <div key={index} className={`flex gap-x-4 ${message.status === 3 ? 'justify-start' : 'justify-end'} items-end`}>
                                 {message.status == 3 && (
                                     <div className='bg-gray-500 h-[35px] flex items-center justify-center text-[12px] w-[35px] rounded-[50%] text-white font-bold'>
