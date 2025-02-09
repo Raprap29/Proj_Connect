@@ -1,10 +1,14 @@
-import { FormEvent, useContext, useEffect, KeyboardEvent, useState, ChangeEvent, FC, useRef, useMemo  } from 'react'
+import { FormEvent, useContext, useEffect, KeyboardEvent, useState, ChangeEvent, FC, useRef } from 'react'
 import { ContextData } from '../../context/AppContext'
 import { FaTimes } from 'react-icons/fa';
 import { Socket } from 'socket.io-client';
-import { useGetMessagesQuery } from '../../api/MessageApi';
-import { skipToken } from '@reduxjs/toolkit/query';
 interface MessageProps {
+    message: string;
+}
+
+interface UserMessages {
+    userId: string;
+    status: number;
     message: string;
 }
 
@@ -12,6 +16,9 @@ interface SockerProps {
     socket: Socket;
     username: string;
     userId: string;
+    isLoading: boolean;
+    refetch(): void;
+    messagesData?: UserMessages[];
 }
 
 interface messagesProps {
@@ -21,14 +28,16 @@ interface messagesProps {
 }
 
 
-const MessageModal: FC<SockerProps> = ({ socket, username, userId}) => {
+
+const MessageModal: FC<SockerProps> = ({ socket, username, userId, isLoading, refetch, messagesData}) => {
     
     const context = useContext(ContextData);
     const messageRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
-    const { data: messagesData } = useGetMessagesQuery(
-        userId ? { userId } : skipToken
-    );
+    const buttonRefStop = useRef<HTMLButtonElement>(null)
+    const [id, setId] = useState("");
+    const [toggleEnd, setToggleEnd] = useState(false);
+
     
     const [messages, setMessages] = useState<messagesProps[]>([]);
 
@@ -40,24 +49,10 @@ const MessageModal: FC<SockerProps> = ({ socket, username, userId}) => {
     const [message, setMessage] = useState<MessageProps>({
         message: '',
     });
-
-    const memoizedMessages = useMemo(() => {
-        if (messagesData) {
-            return [
-                ...messagesData.data.map((msg: messagesProps) => ({
-                    userId: msg.userId,
-                    status: msg.status,
-                    message: msg.message
-                })),
-                ...messages
-            ];
-        }
-        return messages;
-    }, [messagesData, messages]);
-
-
+    
     const handleSendMessage = (e: FormEvent) => {
         e.preventDefault();
+        setToggleEnd(false);
         if (message.message.trim() !== "") {
 
             if (!buttonRef.current) {
@@ -90,15 +85,38 @@ const MessageModal: FC<SockerProps> = ({ socket, username, userId}) => {
         }
     };
 
+    const handleClose = () => {
+        setToggleForm(false);
+        setId("");
+    }
+    
+    // stop ticket
+
+    const stopTicket = () => {
+        socket.emit('stop_ticket', {userId: id});
+        setMessages([]);
+        refetch();
+        setToggleEnd(true);
+    }
+
     useEffect(() => {
         if(toggleForm){
             document.body.style.overflow = 'hidden';
+            setToggleEnd(false);
         }else{
             document.body.style.overflow = 'auto';
         }
 
+        socket.on('stop_ticket_receive', (data) => {
+           if(data.userId === userId){
+            setMessages([]);
+            setToggleEnd(true);
+           }
+        });
+
         socket.on('receive_agent', (data) => {
             if(data.userId === userId){
+                setToggleEnd(false);
                 setMessages([...messages, { 
                     userId: data.userId,
                     status: data.status,
@@ -109,19 +127,41 @@ const MessageModal: FC<SockerProps> = ({ socket, username, userId}) => {
 
         return  () => {
             socket.off('receive_agent');
+            socket.off('stop_ticket_receive');
         }
 
     }, [toggleForm, socket, messages, userId])
 
 
-    
+     // Loading
+     useEffect(() => {
+
+        if(userId){
+            setId(userId);
+        }
+
+
+    }, [isLoading, userId]);
+
+    useEffect(() => {
+        if (isLoading) {
+            setMessages([]); // Clear messages while loading
+        } else if (messagesData) {
+            setMessages([
+                ...messagesData.map((msg: messagesProps) => ({
+                    userId: msg.userId,
+                    status: msg.status,
+                    message: msg.message
+                }))
+            ]);
+        }
+    }, [isLoading, messagesData]);
+
     useEffect(() => {
         if (messageRef.current) {
             messageRef.current.scrollTop = messageRef.current.scrollHeight;
         }
-
-    }, [messageRef, memoizedMessages]);
-
+    }, [messageRef, messages]);
 
     return (
         <div className={`modal-overlay ${toggleForm && ('active')}`}>
@@ -130,11 +170,11 @@ const MessageModal: FC<SockerProps> = ({ socket, username, userId}) => {
                     <div className="bg-purple-600 rounded-t-lg px-5 py-5 flex items-center">
                         <p className="text-white font-bold text-l">Customer Service AI Chat Bot</p>
                         <div className='absolute top-12 right-14 transform -translate-y-1/2 -translate-x-1/2'>
-                            <button type='button' onClick={() => setToggleForm(false)}  className='cursor-pointer text-gray-400 transition duration-300 ease-in-out hover:text-red-400'><FaTimes fontSize={24} /></button>
+                            <button type='button' onClick={handleClose}  className='cursor-pointer text-gray-400 transition duration-300 ease-in-out hover:text-red-400'><FaTimes fontSize={24} /></button>
                         </div>
                     </div>
-                    <div ref={messageRef} className="flex-grow max-h-[360px] h-full overflow-y-auto p-4 space-y-4 bg-red-100">
-                        {memoizedMessages.map((message, index) => (
+                    <div ref={messageRef} className={`flex-grow ${messages?.length != 0 ? 'max-h-[360px]' : 'max-h-[440px]'}  h-full overflow-y-auto p-4 space-y-4 bg-red-100`}>
+                        {messages.map((message, index) => (
                             <div key={index} className={`flex gap-x-4 ${message.status === 3 ? 'justify-start' : 'justify-end'} items-end`}>
                                 {message.status == 3 && (
                                     <div className='bg-gray-500 h-[35px] flex items-center justify-center text-[12px] w-[35px] rounded-[50%] text-white font-bold'>
@@ -159,27 +199,45 @@ const MessageModal: FC<SockerProps> = ({ socket, username, userId}) => {
                                 }
                             </div>
                         ))}
+                        {toggleEnd && (
+                            <div className='text-center text-gray-500 font-bold'>
+                                End of Chat
+                            </div>
+                        )}
                     </div>
-                    <form onSubmit={handleSendMessage} className="w-full flex items-center px-4 py-3 border-t-2">
-                        <textarea
-                        name="message"
-                        id="message"
-                        value={message.message}
-                        onChange={handleMessageChange}
-                        onKeyDown={handleKeyDown}
-                        className="rounded-lg w-full h-[50px] resize-none border-2 p-2"
-                        placeholder="Type your message..."
-                        ></textarea>
-                        <button
-                        ref={buttonRef}
-                        data-username={username}
-                        data-userid={userId}
-                        className="ml-2 bg-purple-600 text-white px-4 py-2 rounded-lg"
-                        type="submit"
-                        >
-                        Send
-                        </button>
-                    </form>
+                    {messages.length != 0 && ( 
+                        <form onSubmit={handleSendMessage} className="w-full flex items-center px-4 py-3 border-t-2">
+                            <textarea
+                            name="message"
+                            id="message"
+                            value={message.message}
+                            onChange={handleMessageChange}
+                            onKeyDown={handleKeyDown}
+                            className="rounded-lg w-full h-[50px] resize-none border-2 p-2"
+                            placeholder="Type your message..."
+                            ></textarea>
+                            <div className='flex'>
+                                <button
+                                ref={buttonRef}
+                                data-username={username}
+                                data-userid={userId}
+                                className="cursor-pointer ml-2 bg-purple-600 text-white px-4 py-2 rounded-lg"
+                                type="submit"
+                                >
+                                Send
+                                </button>
+                            
+                                <button
+                                ref={buttonRefStop}
+                                onClick={stopTicket}
+                                className="cursor-pointer ml-2 bg-red-600 text-white px-4 py-2 rounded-lg"
+                                type="button"
+                                >
+                                End
+                                </button>
+                            </div>
+                        </form>
+                    )}
                 </div>
             </div>
         </div>

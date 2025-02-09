@@ -28,7 +28,7 @@ export const Register = async (c:Context) => {
     const success = await employeeService.createUser(body.firstName, body.lastName, body.username, body.password, 1);
 
     if(success){
-        return c.json({message: success}, 200);
+        return c.json({message: success}, 201);
     }
 }
 

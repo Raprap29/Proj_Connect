@@ -3,7 +3,6 @@ import { Layout, LayoutCustomer, LayoutPrivate } from "../layout/Layout";
 import PublicRoute from "./publicRoute";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
-import Dashboard from "../pages/Main/Dashboard";
 import PrivateRoute from "./privateRoute";
 import Message from "../pages/Main/Chat";
 import {io} from "socket.io-client";
@@ -37,10 +36,6 @@ export const router = createBrowserRouter([
     {
         element: <LayoutPrivate />,
         children: [
-            {
-                path: '/dashboard',
-                element: <PrivateRoute Element={Dashboard}  title="Dashboard | System" socket={socket} />
-            }, 
             {
                 path: '/message',
                 element: <PrivateRoute Element={Message} title="Message | System" socket={socket} />

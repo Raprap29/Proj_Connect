@@ -17,7 +17,7 @@ const PublicRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
     }, [title]);
 
     if (token) {
-        return <Navigate to="/dashboard" />;
+        return <Navigate to="/message" />;
     }
 
     return <Element socket={socket} />;

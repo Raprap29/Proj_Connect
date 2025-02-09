@@ -7,7 +7,8 @@ export const up = async (): Promise<void> => {
    const messageSchema = new mongoose.Schema({
       userId: { type: String, require: true },
       ticketId: { type: String, require: true },
-      message: { type: String, required: true },
+      message: { type: String },
+      read: {type: Boolean, default: false},
       status: { type: Number, required: true },
     });
 

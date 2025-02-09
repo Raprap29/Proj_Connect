@@ -1,4 +1,4 @@
-GET http://localhost:5000/getmessage/6799851351741dc5215df091
+GET http://localhost:5000/online/users/1
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlZpbmNlbnphNSIsImZpcnN0TmFtZSI6IkVsaXphYmV0aC5BYmJvdHQiLCJsYXN0TmFtZSI6IkRldmVuX0dyZWVuZmVsZGVyIiwiYXV0aCI6dHJ1ZSwicm9sZSI6MSwiZXhwIjoxNzM5MDAwNDIxfQ.qAp5kJjSOX8cLcfJYIWNouZRdfwmCfeJGEm2bPJtkxU
 

@@ -53,13 +53,8 @@ const Navbar = () => {
                 <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
                     <ul className="space-y-2 font-medium">
                         <li>
-                            <a href="/dashboard" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                            <span className="ms-3">Dashboard</span>
-                            </a>
-                        </li>
-                        <li>
                             <a href="/message" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                            <span className="flex-1 ms-3 whitespace-nowrap">Message</span>
+                            <span className="flex-1 ms-3 whitespace-nowrap">Manage Message</span>
                             </a>
                         </li>
                         <li>
@@ -70,11 +65,6 @@ const Navbar = () => {
                         <li>
                             <a href="/maintenance/users" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                             <span className="flex-1 ms-3 whitespace-nowrap">Manage Users</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                            <span className="flex-1 ms-3 whitespace-nowrap">Products</span>
                             </a>
                         </li>
                         <li>

@@ -7,6 +7,29 @@ interface UserMessages {
     message: string;
 }
 
+// Messages and User Props
+interface User {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    role: number;
+    username: string;
+}
+
+interface messagesRead {
+    userId: string;
+    message: string;
+    read: boolean;
+    ticketId: string;
+    status: number;
+}
+
+// Main online users
+interface OnlineUsers {
+   user: User;
+   messages: messagesRead[];
+}
+
 export const MessageApi = createApi({
     reducerPath: 'MessageApi',
     baseQuery: fetchBaseQuery({
@@ -27,9 +50,25 @@ export const MessageApi = createApi({
               method: 'GET',
             }),
         }),
+        getOnlineUsers: builder.query<{users: OnlineUsers[]}, {searchQuery: string}>({
+            query: ({ searchQuery }) => ({
+                url: `/online/users?q=${searchQuery}`,
+                method: 'GET'
+            })
+        }),
+        updateUnread: builder.mutation<{status: boolean}, {userId: string}>({
+            query: ({ userId }) => ({
+                url: `/update-unread/${userId}`,
+                method: "POST",
+            })
+        })
     })
 })
 
 export const { 
-    useGetMessagesQuery
+
+    useUpdateUnreadMutation,
+
+    useGetMessagesQuery,
+    useGetOnlineUsersQuery,
 } = MessageApi;

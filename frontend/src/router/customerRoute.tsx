@@ -48,7 +48,7 @@ const CustomerRoute: React.FC<ElementProp> = ({ Element, title, socket }) => {
   // Decode token and check role
   const decoded: UserProps = jwtDecode(token);
   if (decoded.role !== 0) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/message" replace />;
   }
 
   // Render the protected element

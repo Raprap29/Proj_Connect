@@ -5,11 +5,13 @@ interface IMessage extends Document {
   message: string;
   ticketId: string;
   status: number;
+  read: boolean
 }
 
 const MessageSchema = new Schema<IMessage>({
   userId: { type: String, required: true },
-  message: { type: String, required: true },
+  message: { type: String },
+  read: {type: Boolean, default: false},
   ticketId: { type: String, require: true },
   status: { type: Number, required: true },
 }, {
